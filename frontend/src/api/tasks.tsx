@@ -8,3 +8,30 @@ export const getTasksCurrentCourse = async (id: string) => {
     console.log('Ошибка', error);
   }
 };
+
+export const postSolution = async (solution: string, id: string) => {
+  try {
+    const response = await axiosInstance.post(`/tasks/${id}/complete/`, { solution: solution });
+    return response.data;
+  } catch (error) {
+    console.log('Ошибка', error);
+  }
+};
+
+export const getCurrentCompletedTasks = async (id: string) => {
+  try {
+    const response = await axiosInstance.get(`/tasks/${id}/completed/`);
+    return response.data;
+  } catch (error) {
+    console.log('Ошибка', error);
+  }
+};
+
+export const processingTask = async (id: string, solutionId: string) => {
+  try {
+    const response = await axiosInstance.post(`/tasks/${id}/evaluate/?solution_id=${solutionId}`, { is_rigth: true });
+    return response.data;
+  } catch (error) {
+    console.log('Ошибка', error);
+  }
+};

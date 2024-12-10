@@ -24,7 +24,7 @@ const Vacancies: React.FC = () => {
       }
     };
     fetchCourses();
-  }, [respondes]);
+  }, []);
 
   const handleAddVacancy = async () => {
     try {

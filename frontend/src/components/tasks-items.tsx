@@ -1,10 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getTasksCurrentCourse } from '../api/tasks';
+import { getCurrentCompletedTasks, getTasksCurrentCourse, postSolution, processingTask } from '../api/tasks';
+import { getCurrentUser } from '../api/user';
 import { Course } from '../types/course';
 
 interface Task extends Course {
   course: number;
+}
+
+interface CompletedTask {
+  id: number;
+  solution: string;
+  completed_at: string;
+  is_right: boolean | null;
+  task: number; // ID задачи
+  user: number; // ID пользователя
 }
 
 export const TasksItems = () => {
@@ -12,12 +22,14 @@ export const TasksItems = () => {
   const navigate = useNavigate();
 
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [completedTasks, setCompletedTasks] = useState<CompletedTask[]>([]);
   const [isTextAreaVisible, setIsTextAreaVisible] = useState(false);
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [selectedTaskId, setSelectedTaskId] = useState<string>('');
   const [responseText, setResponseText] = useState('');
+  const [role, setRole] = useState('');
 
   useEffect(() => {
-    const fetchCourses = async () => {
+    const fetchTasks = async () => {
       if (id) {
         try {
           const response = await getTasksCurrentCourse(id);
@@ -29,31 +41,61 @@ export const TasksItems = () => {
         console.error('ID is undefined');
       }
     };
-    fetchCourses();
+
+    const fetchUser = async () => {
+      try {
+        const response = await getCurrentUser();
+        setRole(response.role);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchTasks();
+    fetchUser();
   }, [id]);
+
+  // Функция для получения решенных задач по ID
+  useEffect(() => {
+    const fetchCompletedTasks = async () => {
+      if (role === "Учитель" && selectedTaskId) {
+        try {
+          const response = await getCurrentCompletedTasks(selectedTaskId); // Передаем ID задачи
+          setCompletedTasks(response);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+
+    fetchCompletedTasks();
+  }, [role, selectedTaskId]); // Зависимости: роль и выбранный ID задачи
 
   const handleTaskClick = (taskId: string) => {
     if (selectedTaskId !== taskId) {
- 
       // Если нажали на другую задачу, показать текстовое поле
       setSelectedTaskId(taskId);
       setIsTextAreaVisible(true);
       setResponseText(''); // Сброс текста при выборе новой задачи
-		}
+    } 
   };
 
   const handleSubmitResponse = async () => {
     if (selectedTaskId && responseText) {
-      // Здесь вы можете сделать запрос на сервер с responseText
-      // Например:
-      // await sendResponseToServer(selectedTaskId, responseText);
-
-      alert('Ответ отправлен!'); // Сообщение об успешной отправке
-      setIsTextAreaVisible(false); // Закрыть textarea
-      setResponseText(''); // Сбросить текст
-      setSelectedTaskId(null); // Сбросить выбранную задачу
+      try {
+        await postSolution(responseText, selectedTaskId); // Используем selectedTaskId
+        alert('Ответ отправлен!');
+        setIsTextAreaVisible(false);
+        setResponseText('');
+        setSelectedTaskId(null);
+      } catch (error) {
+        console.log('Ошибка', error);
+      }
     }
   };
+
+	console.log(selectedTaskId);
+	
 
   return (
     <>
@@ -106,7 +148,7 @@ export const TasksItems = () => {
                   </div>
                 </div>
                 {/* Отображение текстового поля только для выбранной задачи */}
-                {isTextAreaVisible && selectedTaskId === el.id && (
+                {isTextAreaVisible && role === "Студент" && selectedTaskId === el.id && (
                   <div className="response-area">
                     <textarea
                       value={responseText}
@@ -115,6 +157,16 @@ export const TasksItems = () => {
                     />
                     <button onClick={handleSubmitResponse}>Отправить</button>
                   </div>
+                )}
+                {/* Отображение решенного решения для учителя */}
+                {role === "Учитель" && completedTasks.length > 0 && completedTasks.map((completedTask) => 
+                  completedTask.task === el.id && (
+                    <div key={completedTask.id} className="completed-task">
+                      <h4>Решение:</h4>
+                      <p>{completedTask.solution}</p>
+											<button onClick={() => processingTask(selectedTaskId, el.id)}>Принять</button>
+                    </div>
+                  )
                 )}
               </div>
             ))}
