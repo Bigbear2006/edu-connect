@@ -1,5 +1,7 @@
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { userAuth } from '../api/auth-register';
+import { useState } from 'react';
 
 type LoginFormInputs = {
   email: string;
@@ -14,9 +16,19 @@ export const FormLogin = () => {
   } = useForm<LoginFormInputs>({
     mode: 'onChange',
   });
+	const [authError, setAuthError] = useState<string | null>(null);
 
-  const onSubmit = (data: LoginFormInputs) => {
-    console.log('Форма отправлена:', data);
+  const navigate = useNavigate();
+
+  const onSubmit = async (data: LoginFormInputs) => {
+    try {
+      const response = await userAuth(data.email, data.password);
+      if (response) {
+        navigate('/courses');
+      }
+    } catch  {
+      setAuthError('Неверные данные. Попробуйте ещё раз.');
+    }
   };
 
   return (
@@ -51,6 +63,7 @@ export const FormLogin = () => {
               })}
             />
           </div>
+					{authError && <div className="form__error">{authError}</div>}
 
           <button className="form__button" type="submit" disabled={!isValid}>
             Войти

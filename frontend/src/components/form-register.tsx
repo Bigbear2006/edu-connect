@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { userRegister } from '../api/auth-register';
 
 type RegistrationFormInputs = {
   fullName: string;
@@ -18,8 +19,14 @@ export const FormRegistration = () => {
     mode: 'onChange',
   });
 
-  const onSubmit = (data: RegistrationFormInputs) => {
-    console.log('Регистрация успешно выполнена:', data);
+	const navigate = useNavigate()
+
+  const onSubmit = async (data: RegistrationFormInputs) => {
+    const response = await userRegister(data.fullName, data.email, data.password)
+
+		if (response) {
+			navigate('/login')
+		}
   };
 
   const password = watch('password');
