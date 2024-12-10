@@ -137,7 +137,7 @@ LOGGING = {
     'loggers': {
         'queries': {
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'INFO',
         },
     },
 }

@@ -10,6 +10,8 @@ class UserSerializer(ModelSerializer):
             'is_active',
             'is_staff',
             'is_superuser',
+            'first_name',
+            'last_name',
             'last_login',
             'groups',
             'user_permissions',
@@ -20,7 +22,7 @@ class UserSerializer(ModelSerializer):
         }
 
     def create(self, validated_data):
-        validated_data.pop('role')
+        validated_data.pop('role', None)
         return User.objects.create_user(
             validated_data.pop('username', None),
             validated_data.pop('email', None),
@@ -29,5 +31,5 @@ class UserSerializer(ModelSerializer):
         )
 
     def update(self, instance, validated_data):
-        validated_data.pop('role')
+        validated_data.pop('role', None)
         return super(UserSerializer, self).update(instance, validated_data)

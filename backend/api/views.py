@@ -1,4 +1,4 @@
-from drf_yasg.utils import no_body, swagger_auto_schema
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.request import Request
@@ -30,19 +30,25 @@ class TaskViewSet(ModelViewSet):
     queryset = models.Task.objects.all()
     serializer_class = serializers.TaskSerializer
 
+    def get_serializer_context(self):
+        context = super(TaskViewSet, self).get_serializer_context()
+        context['task_id'] = self.kwargs['pk']
+        return context
+
     @swagger_auto_schema(
-        request_body=no_body,
-        operation_summary='отметить задачу как выполненную',
+        request_body=serializers.CompletedTaskSerializer,
+        operation_summary='прислать ответ на задачу',
         responses={200: serializers.CompletedTaskSerializer()},
     )
     @action(['POST'], True, 'complete', 'complete-task')
     def complete(self, request: Request, pk: int):
-        completed, created = models.CompletedTask.objects.get_or_create(
-            user_id=request.user.id,
-            task_id=pk,
+        serializer = serializers.CompletedTaskSerializer(
+            data=request.data,
+            context=self.get_serializer_context(),
         )
-        data = serializers.CompletedTaskSerializer(completed).data
-        return Response(data, 201)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, 201)
 
     @action(['GET'], True, 'completed', 'completed-tasks')
     def completed(self, request: Request, pk: int):

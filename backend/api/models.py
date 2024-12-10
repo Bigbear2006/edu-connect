@@ -35,6 +35,7 @@ class Task(models.Model):
 
 
 class CompletedTask(models.Model):
+    solution = models.TextField()
     user = models.ForeignKey(User, models.CASCADE, 'completed_tasks')
     task = models.ForeignKey(Task, models.CASCADE, 'completed_by_users')
     completed_at = models.DateTimeField(auto_now_add=True)

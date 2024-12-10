@@ -6,22 +6,39 @@ from rest_framework.generics import (
     RetrieveUpdateAPIView,
 )
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import token_obtain_pair, token_refresh
 
 from api.permissions import IsAdmin
-from api.serializers import TaskSerializer
+from api.serializers import CompletedTaskSerializer
 from jwt_auth.models import User
 from jwt_auth.serializers import UserSerializer
 
+login_view = swagger_auto_schema('POST', tags=['auth'])(token_obtain_pair)
+refresh_token_view = swagger_auto_schema('POST', tags=['auth'])(token_refresh)
 
-@method_decorator(swagger_auto_schema(tags=['users']), 'post')
+
+@method_decorator(
+    swagger_auto_schema(operation_summary='зарегистрировать пользователя'),
+    'post',
+)
 class RegisterUserAPIView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
-@method_decorator(swagger_auto_schema(tags=['users']), 'get')
-@method_decorator(swagger_auto_schema(tags=['users']), 'put')
-@method_decorator(swagger_auto_schema(tags=['users']), 'patch')
+@method_decorator(
+    swagger_auto_schema(
+        operation_summary='информация о зарегистрированном пользователе',
+    ),
+    'get',
+)
+@method_decorator(
+    swagger_auto_schema(
+        operation_summary='изменить информацию о '
+        'зарегистрированном пользователе',
+    ),
+    'patch',
+)
 class UserInfoAPIView(RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
@@ -33,24 +50,39 @@ class UserInfoAPIView(RetrieveUpdateAPIView):
 
 @method_decorator(
     swagger_auto_schema(
-        tags=['users'],
+        operation_id='auth_user_detail_info_read',
+        operation_summary='информация о пользователе по его id',
+    ),
+    'get',
+)
+@method_decorator(
+    swagger_auto_schema(
+        operation_id='auth_user_detail_info_partial_update',
+        operation_summary='изменить информацию о пользователе по его id',
+    ),
+    'patch',
+)
+class UserDetailInfoAPIView(RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+@method_decorator(
+    swagger_auto_schema(
         operation_summary='все выполненные задачи пользователя',
     ),
     'get',
 )
 class UserCompletedTasksAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = TaskSerializer
+    serializer_class = CompletedTaskSerializer
 
     def get_queryset(self):
         return self.request.user.completed_tasks
 
 
 @method_decorator(
-    swagger_auto_schema(
-        tags=['users'],
-        operation_summary='список всех пользователей',
-    ),
+    swagger_auto_schema(operation_summary='список всех пользователей'),
     'get',
 )
 class UserListAPIView(ListAPIView):
