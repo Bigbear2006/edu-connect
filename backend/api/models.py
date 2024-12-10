@@ -39,6 +39,7 @@ class CompletedTask(models.Model):
     user = models.ForeignKey(User, models.CASCADE, 'completed_tasks')
     task = models.ForeignKey(Task, models.CASCADE, 'completed_by_users')
     completed_at = models.DateTimeField(auto_now_add=True)
+    is_right = models.BooleanField(null=True)
     objects: models.Manager
 
 

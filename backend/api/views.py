@@ -1,6 +1,8 @@
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins
 from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -57,6 +59,30 @@ class TaskViewSet(ModelViewSet):
         data = serializers.CompletedTaskSerializer(completed, many=True).data
         return Response(data, 200)
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'is_right': openapi.Schema(type=openapi.TYPE_BOOLEAN),
+            },
+        ),
+        manual_parameters=[
+            openapi.Parameter(
+                'solution_id',
+                openapi.IN_QUERY,
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            ),
+        ],
+    )
+    @action(['POST'], True, 'evaluate', 'evaluate-task')
+    def evaluate(self, request: Request, pk: int):
+        solution_id = request.query_params.get('solution_id', None)
+        obj = get_object_or_404(models.CompletedTask, pk=solution_id)
+        obj.is_right = request.data.get('is_right', False)
+        data = serializers.CompletedTaskSerializer(obj).data
+        return Response(data, 200)
+
 
 class ChangeRoleBidViewSet(
     mixins.CreateModelMixin,
@@ -77,23 +103,44 @@ class ChangeRoleBidViewSet(
 
 
 class CompanyViewSet(ModelViewSet):
-    queryset = models.Company
+    queryset = models.Company.objects.all()
     serializer_class = serializers.CompanySerializer
 
+    @swagger_auto_schema(responses={200: serializers.JobSerializer(many=True)})
     @action(['GET'], True, 'jobs', 'company-jobs')
     def jobs(self, request: Request, pk: int):
-        jobs = self.get_object().jobs
-        data = serializers.JobSerializer(jobs).data
+        jobs = self.get_object().jobs.all()
+        data = serializers.JobSerializer(jobs, many=True).data
         return Response(data, 200)
 
 
 class JobViewSet(ModelViewSet):
-    queryset = models.Job
+    queryset = models.Job.objects.all()
     serializer_class = serializers.JobSerializer
+
+    @swagger_auto_schema(
+        responses={200: serializers.JobApplicationSerializer(many=True)},
+    )
+    @action(['GET'], True, 'applications', 'job-applications')
+    def applications(self, request: Request, pk: int):
+        applications = self.get_object().applications.all()
+        applications = applications.select_related('user')
+        data = serializers.JobApplicationSerializer(
+            applications,
+            context=self.get_serializer_context(),
+            many=True,
+        ).data
+        return Response(data, 200)
+
+    def get_serializer_context(self):
+        context = super(JobViewSet, self).get_serializer_context()
+        context['user_detail'] = True
+        return context
 
 
 class JobApplicationViewSet(mixins.CreateModelMixin, GenericViewSet):
-    queryset = models.JobApplication
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = models.JobApplication.objects.all()
     serializer_class = serializers.JobApplicationSerializer
 
     def get_queryset(self):
