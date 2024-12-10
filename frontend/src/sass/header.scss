@@ -1,0 +1,15 @@
+.profile-header {
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(to right, #98DCC6, #52766A);
+  color: white;
+  text-align: left;
+  position: fixed;
+  font-size: 1.8rem;
+  font-weight: bold;
+  z-index: 1000;
+
+  .header-title {
+    margin: 0;
+  }
+}
