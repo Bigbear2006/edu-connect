@@ -1,0 +1,78 @@
+@import '../libs/variables';
+
+.courses {
+  margin-top: 50px;
+  padding-bottom: 50px;
+
+  &__title {
+    font-size: 2.5rem;
+    text-align: center;
+    color: $dark-green;
+    font-weight: 600;
+    margin-bottom: 50px;
+  }
+
+  &__items {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+		row-gap: 40px;
+  }
+
+  &__item {
+    border: 1px solid rgb(200, 200, 200);
+    border-radius: 15px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    &-img {
+      object-fit: cover;
+      background-size: cover;
+      background-repeat: no-repeat;
+      width: 100%;
+      border-top-left-radius: 14px;
+      border-top-right-radius: 14px;
+    }
+
+    &-title {
+      font-size: 2rem;
+      color: $dark-green;
+      margin-top: 15px;
+      font-weight: 500;
+      margin-bottom: 15px;
+    }
+
+    &-desc {
+      padding: 0 20px;
+      text-align: start;
+      color: rgb(108, 108, 108);
+      flex-grow: 1;
+    }
+
+    &-button {
+      display: block;
+      margin: 30px 0px;
+      margin-top: 35px;
+      width: 120px;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: $dark-green;
+      color: white;
+      font-size: 1rem;
+			transition: 0.3s ease;
+
+			&:hover {
+				background-color: $green;
+				transition: 0.3s ease;
+			}
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const axiosInstance = axios.create({
-  baseURL: 'http://fvbit.ru/api/',
+  baseURL: 'https://fvbit.ru/api/',
 });
 
 axiosInstance.interceptors.request.use(
