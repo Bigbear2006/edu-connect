@@ -25,7 +25,7 @@ export const CoursesItems = () => {
         <div className="courses__title">Курсы</div>
         <div className="courses__items">
           {courses.map((el: Course) => (
-            <div key={el.id} className="courses__item">
+            <div onClick={() => navigate(`/tasks/${el.id}`)} key={el.id} className="courses__item">
               <img
                 src="https://blog.coursify.me/wp-content/uploads/2018/08/plan-your-online-course.jpg"
                 alt="course"
@@ -35,13 +35,8 @@ export const CoursesItems = () => {
                 {' '}
                 <div className="courses__item-title">{el.title}</div>
                 <div className="courses__item-desc">{el.description}</div>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <button
-                    onClick={() => navigate(`/tasks/${el.id}`)}
-                    className="courses__item-button">
-                    Перейти
-                  </button>
-                </div>
+                {/*<div style={{ display: 'flex', justifyContent: 'center' }}>*/}
+                {/*</div>*/}
               </div>
             </div>
           ))}

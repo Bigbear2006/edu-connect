@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCourses } from '../api/courses';
 import { getCurrentUser } from '../api/user';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCrown, faUserGraduate } from '@fortawesome/free-solid-svg-icons';
 import { Header } from '../components';
 import CourseCard from '../components/course-card';
 import { Course } from '../types/course';
@@ -50,8 +52,8 @@ export const Profile = () => {
               {' '}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="54"
-                height="54"
+                width="50"
+                height="50"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="#333333"
@@ -69,8 +71,18 @@ export const Profile = () => {
 
           <div className="profile-details">
             <div className="profile-contact">
-              <p>Role: {user?.role}</p>
-              <p>Email: {user?.email}</p>
+              <p>Роль: {user?.role}</p>
+              <p>Почта: {user?.email}</p>
+            </div>
+            <div className="profile-buttons-container">
+              <button className="profile-button-change-role">
+                <FontAwesomeIcon icon={faCrown} style={{marginRight: "8px"}}/>
+                Стать админом
+              </button>
+              <button className="profile-button-change-role">
+                <FontAwesomeIcon icon={faUserGraduate} style={{marginRight: "8px"}}/>
+                Стать преподавателем
+              </button>
             </div>
             <button onClick={logout} className="profile-button">Выйти</button>
           </div>
@@ -78,7 +90,7 @@ export const Profile = () => {
         <div className="profile-content__courses">
           <h1>Пройденные курсы</h1>
           {courses.map((el: Course) => (
-            <CourseCard id={el.id} title={el.title} description={el.description} />
+              <CourseCard id={el.id} title={el.title} description={el.description}/>
           ))}
         </div>
       </div>
