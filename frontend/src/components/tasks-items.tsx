@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getTasksCurrentCourse } from '../api/tasks';
+import { getTasksCurrentCourse } from '../api/tasks.ts';
 import { Course } from '../types/course';
 
 interface Task extends Course {
@@ -34,24 +34,19 @@ export const TasksItems = () => {
 
   const handleTaskClick = (taskId: string) => {
     if (selectedTaskId !== taskId) {
- 
-      // Если нажали на другую задачу, показать текстовое поле
       setSelectedTaskId(taskId);
       setIsTextAreaVisible(true);
-      setResponseText(''); // Сброс текста при выборе новой задачи
+      setResponseText('');
 		}
   };
 
   const handleSubmitResponse = async () => {
     if (selectedTaskId && responseText) {
-      // Здесь вы можете сделать запрос на сервер с responseText
-      // Например:
-      // await sendResponseToServer(selectedTaskId, responseText);
 
-      alert('Ответ отправлен!'); // Сообщение об успешной отправке
-      setIsTextAreaVisible(false); // Закрыть textarea
-      setResponseText(''); // Сбросить текст
-      setSelectedTaskId(null); // Сбросить выбранную задачу
+      alert('Ответ отправлен!');
+      setIsTextAreaVisible(false);
+      setResponseText('');
+      setSelectedTaskId(null);
     }
   };
 
@@ -105,7 +100,6 @@ export const TasksItems = () => {
                     {el.description}
                   </div>
                 </div>
-                {/* Отображение текстового поля только для выбранной задачи */}
                 {isTextAreaVisible && selectedTaskId === el.id && (
                   <div className="response-area">
                     <textarea
