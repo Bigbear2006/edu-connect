@@ -11,7 +11,7 @@
 ![Shell](https://img.shields.io/badge/Shell-Script-4EAA25?logo=shell&logoColor=white)
 
 ## Clone repository
-`git clone https://github.com/Bigbear2006/django-drf-template.git`
+`git clone https://github.com/Bigbear2006/edu-connect.git`
 
 ## Generate Django SECRET_KEY
 ```shell
