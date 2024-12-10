@@ -3,7 +3,7 @@ import {Fragment} from "react";
 
 export const Test = () => {
     <Fragment>
-        <p>Текст</p>
-        <div>chto-to</div>
+        <p>Текстfd</p>
+				<div>sdfdsg</div>
     </Fragment>
 }
