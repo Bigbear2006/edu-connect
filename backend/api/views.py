@@ -77,7 +77,7 @@ class ChangeRoleBidViewSet(
 
 
 class CompanyViewSet(ModelViewSet):
-    queryset = models.Company
+    queryset = models.Company.objects.all()
     serializer_class = serializers.CompanySerializer
 
     @swagger_auto_schema(responses={200: serializers.JobSerializer(many=True)})
@@ -89,7 +89,7 @@ class CompanyViewSet(ModelViewSet):
 
 
 class JobViewSet(ModelViewSet):
-    queryset = models.Job
+    queryset = models.Job.objects.all()
     serializer_class = serializers.JobSerializer
 
     @swagger_auto_schema(
@@ -114,7 +114,7 @@ class JobViewSet(ModelViewSet):
 
 class JobApplicationViewSet(mixins.CreateModelMixin, GenericViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
-    queryset = models.JobApplication
+    queryset = models.JobApplication.objects.all()
     serializer_class = serializers.JobApplicationSerializer
 
     def get_queryset(self):
