@@ -33,7 +33,7 @@ class TaskViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         context = super(TaskViewSet, self).get_serializer_context()
-        context['task_id'] = self.kwargs['pk']
+        context['task_id'] = self.kwargs.get('pk', None)
         return context
 
     @swagger_auto_schema(
@@ -69,4 +69,36 @@ class ChangeRoleBidViewSet(
     serializer_class = serializers.ChangeRoleBidSerializer
 
     def get_queryset(self):
-        return super().get_queryset().select_related('user')
+        return (
+            super(ChangeRoleBidViewSet, self)
+            .get_queryset()
+            .select_related('user')
+        )
+
+
+class CompanyViewSet(ModelViewSet):
+    queryset = models.Company
+    serializer_class = serializers.CompanySerializer
+
+    @action(['GET'], True, 'jobs', 'company-jobs')
+    def jobs(self, request: Request, pk: int):
+        jobs = self.get_object().jobs
+        data = serializers.JobSerializer(jobs).data
+        return Response(data, 200)
+
+
+class JobViewSet(ModelViewSet):
+    queryset = models.Job
+    serializer_class = serializers.JobSerializer
+
+
+class JobApplicationViewSet(mixins.CreateModelMixin, GenericViewSet):
+    queryset = models.JobApplication
+    serializer_class = serializers.JobApplicationSerializer
+
+    def get_queryset(self):
+        return (
+            super(JobApplicationViewSet, self)
+            .get_queryset()
+            .select_related('user')
+        )

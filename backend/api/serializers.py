@@ -54,3 +54,26 @@ class ChangeRoleBidSerializer(ModelSerializer):
         data = super(ChangeRoleBidSerializer, self).to_representation(instance)
         data['user'] = UserSerializer(instance.user).data
         return data
+
+
+class CompanySerializer(ModelSerializer):
+    class Meta:
+        model = models.Company
+        fields = '__all__'
+
+
+class JobSerializer(ModelSerializer):
+    class Meta:
+        model = models.Job
+        fields = '__all__'
+
+
+class JobApplicationSerializer(ModelSerializer):
+    class Meta:
+        model = models.JobApplication
+        fields = '__all__'
+        read_only_fields = ('user',)
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(JobApplicationSerializer, self).create(validated_data)

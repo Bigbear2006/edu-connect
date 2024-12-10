@@ -11,6 +11,13 @@ router.register(
     views.ChangeRoleBidViewSet,
     'change-role-bids',
 )
+router.register('companies', views.CompanyViewSet, 'companies')
+router.register('jobs', views.JobViewSet, 'jobs')
+router.register(
+    'jobs-applications',
+    views.JobApplicationViewSet,
+    'jobs-applications',
+)
 
 urlpatterns = [
     path('', include(router.urls)),

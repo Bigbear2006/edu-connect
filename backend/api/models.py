@@ -47,3 +47,64 @@ class ChangeRoleBid(models.Model):
     user = models.ForeignKey(User, models.CASCADE, 'bids')
     created_at = models.DateTimeField(auto_now_add=True)
     objects: models.Manager
+
+
+class Company(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    address = models.TextField()
+    objects: models.Manager
+
+    def __str__(self):
+        return self.title
+
+
+class Job(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    company = models.ForeignKey(Company, models.CASCADE, 'jobs')
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects: models.Manager
+
+    def __str__(self):
+        return self.title
+
+
+class JobApplication(models.Model):
+    job = models.ForeignKey(Job, models.CASCADE, 'applications')
+    user = models.ForeignKey(User, models.CASCADE, 'applications')
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects: models.Manager
+
+
+# class Project(models.Model):
+#     title = models.CharField(max_length=255)
+#     description = models.TextField()
+#     company = models.ForeignKey(Company, models.CASCADE, 'projects')
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     is_active = models.BooleanField(default=True)
+#     objects: models.Manager
+#
+#     def __str__(self):
+#         return self.title
+#
+#
+# class Team(models.Model):
+#     title = models.CharField(max_length=255)
+#     description = models.TextField()
+#     users = models.ManyToManyField(User, 'teams', through='TeamUser')
+#     objects: models.Manager
+#
+#
+# class TeamUser(models.Model):
+#     team = models.ForeignKey(Team, models.CASCADE)
+#     user = models.ForeignKey(User, models.CASCADE)
+#     objects: models.Manager
+#
+#
+# class ProjectSolution(models.Model):
+#     project = models.ForeignKey(Project, models.CASCADE, 'solutions')
+#     team = models.ForeignKey(Team, models.CASCADE, 'solutions')
+#     solution = models.TextField()
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     objects: models.Manager
