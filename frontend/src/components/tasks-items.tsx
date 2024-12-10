@@ -11,7 +11,10 @@ export const TasksItems = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isTextAreaVisible, setIsTextAreaVisible] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [responseText, setResponseText] = useState('');
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -27,7 +30,30 @@ export const TasksItems = () => {
       }
     };
     fetchCourses();
-  }, []);
+  }, [id]);
+
+  const handleTaskClick = (taskId: string) => {
+    if (selectedTaskId !== taskId) {
+ 
+      // Если нажали на другую задачу, показать текстовое поле
+      setSelectedTaskId(taskId);
+      setIsTextAreaVisible(true);
+      setResponseText(''); // Сброс текста при выборе новой задачи
+		}
+  };
+
+  const handleSubmitResponse = async () => {
+    if (selectedTaskId && responseText) {
+      // Здесь вы можете сделать запрос на сервер с responseText
+      // Например:
+      // await sendResponseToServer(selectedTaskId, responseText);
+
+      alert('Ответ отправлен!'); // Сообщение об успешной отправке
+      setIsTextAreaVisible(false); // Закрыть textarea
+      setResponseText(''); // Сбросить текст
+      setSelectedTaskId(null); // Сбросить выбранную задачу
+    }
+  };
 
   return (
     <>
@@ -67,19 +93,29 @@ export const TasksItems = () => {
 
           <div className="courses__items tasks__items">
             {tasks.map((el: Task) => (
-              <div key={el.id} className="courses__item">
+              <div onClick={() => handleTaskClick(el.id)} key={el.id} className="courses__item">
                 <img
                   src="https://blog.coursify.me/wp-content/uploads/2018/08/plan-your-online-course.jpg"
                   alt="course"
                   className="courses__item-img"
                 />
                 <div className="courses__item-content">
-                  {' '}
                   <div className="courses__item-title">{el.title}</div>
                   <div style={{ marginBottom: '20px' }} className="courses__item-desc">
                     {el.description}
                   </div>
                 </div>
+                {/* Отображение текстового поля только для выбранной задачи */}
+                {isTextAreaVisible && selectedTaskId === el.id && (
+                  <div className="response-area">
+                    <textarea
+                      value={responseText}
+                      onChange={(e) => setResponseText(e.target.value)}
+                      placeholder="Введите ваш ответ..."
+                    />
+                    <button onClick={handleSubmitResponse}>Отправить</button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
