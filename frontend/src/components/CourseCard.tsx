@@ -1,5 +1,5 @@
 import React from "react";
-import '../sass/card.scss';
+import '../sass/courseCard.scss';
 
 interface CourseCardProps {
     imageUrl: string;
