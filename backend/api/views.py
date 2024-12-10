@@ -80,10 +80,11 @@ class CompanyViewSet(ModelViewSet):
     queryset = models.Company
     serializer_class = serializers.CompanySerializer
 
+    @swagger_auto_schema(responses={200: serializers.JobSerializer(many=True)})
     @action(['GET'], True, 'jobs', 'company-jobs')
     def jobs(self, request: Request, pk: int):
-        jobs = self.get_object().jobs
-        data = serializers.JobSerializer(jobs).data
+        jobs = self.get_object().jobs.all()
+        data = serializers.JobSerializer(jobs, many=True).data
         return Response(data, 200)
 
 
@@ -91,8 +92,28 @@ class JobViewSet(ModelViewSet):
     queryset = models.Job
     serializer_class = serializers.JobSerializer
 
+    @swagger_auto_schema(
+        responses={200: serializers.JobApplicationSerializer(many=True)},
+    )
+    @action(['GET'], True, 'applications', 'job-applications')
+    def applications(self, request: Request, pk: int):
+        applications = self.get_object().applications.all()
+        applications = applications.select_related('user')
+        data = serializers.JobApplicationSerializer(
+            applications,
+            context=self.get_serializer_context(),
+            many=True,
+        ).data
+        return Response(data, 200)
+
+    def get_serializer_context(self):
+        context = super(JobViewSet, self).get_serializer_context()
+        context['user_detail'] = True
+        return context
+
 
 class JobApplicationViewSet(mixins.CreateModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = models.JobApplication
     serializer_class = serializers.JobApplicationSerializer
 

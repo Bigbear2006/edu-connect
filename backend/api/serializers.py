@@ -77,3 +77,15 @@ class JobApplicationSerializer(ModelSerializer):
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
         return super(JobApplicationSerializer, self).create(validated_data)
+
+    def to_representation(self, instance):
+        data = super(JobApplicationSerializer, self).to_representation(
+            instance,
+        )
+
+        if self.context.get('user_detail', False):
+            data['user'] = UserSerializer(instance.user).data
+
+        if self.context.get('job_detail', False):
+            data['job'] = JobSerializer(instance.job).data
+        return data

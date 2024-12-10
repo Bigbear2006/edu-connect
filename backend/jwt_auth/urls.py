@@ -19,6 +19,11 @@ urlpatterns = [
         views.UserCompletedTasksAPIView.as_view(),
         name='user-completed_tasks',
     ),
+    path(
+        'user/jobs-applications/',
+        views.UserJobsApplicationsAPIView.as_view(),
+        name='user-jobs-applications',
+    ),
     path('user/info/', views.UserInfoAPIView.as_view(), name='user-info'),
     path(
         'user/<int:pk>/info/',

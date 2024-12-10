@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import token_obtain_pair, token_refresh
 
 from api.permissions import IsAdmin
-from api.serializers import CompletedTaskSerializer
+from api.serializers import CompletedTaskSerializer, JobApplicationSerializer
 from jwt_auth.models import User
 from jwt_auth.serializers import UserSerializer
 
@@ -79,6 +79,26 @@ class UserCompletedTasksAPIView(ListAPIView):
 
     def get_queryset(self):
         return self.request.user.completed_tasks
+
+
+@method_decorator(
+    swagger_auto_schema(operation_summary='список всех откликов пользователя'),
+    'get',
+)
+class UserJobsApplicationsAPIView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = JobApplicationSerializer
+
+    def get_queryset(self):
+        return self.request.user.applications
+
+    def get_serializer_context(self):
+        context = super(
+            UserJobsApplicationsAPIView,
+            self,
+        ).get_serializer_context()
+        context['job_detail'] = True
+        return context
 
 
 @method_decorator(
