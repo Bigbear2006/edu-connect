@@ -6,6 +6,11 @@ from api import views
 router = DefaultRouter()
 router.register('courses', views.CourseViewSet, 'courses')
 router.register('tasks', views.TaskViewSet, 'tasks')
+router.register(
+    'change-role-bids',
+    views.ChangeRoleBidViewSet,
+    'change-role-bids',
+)
 
 urlpatterns = [
     path('', include(router.urls)),

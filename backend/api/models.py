@@ -40,3 +40,10 @@ class CompletedTask(models.Model):
     task = models.ForeignKey(Task, models.CASCADE, 'completed_by_users')
     completed_at = models.DateTimeField(auto_now_add=True)
     objects: models.Manager
+
+
+class ChangeRoleBid(models.Model):
+    role = models.CharField(max_length=50, choices=User.ROLES)
+    user = models.ForeignKey(User, models.CASCADE, 'bids')
+    created_at = models.DateTimeField(auto_now_add=True)
+    objects: models.Manager

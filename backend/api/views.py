@@ -1,9 +1,10 @@
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from api import models, serializers
 
@@ -55,3 +56,17 @@ class TaskViewSet(ModelViewSet):
         completed = models.CompletedTask.objects.filter(task_id=pk)
         data = serializers.CompletedTaskSerializer(completed, many=True).data
         return Response(data, 200)
+
+
+class ChangeRoleBidViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    GenericViewSet,
+):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = models.ChangeRoleBid.objects.all()
+    serializer_class = serializers.ChangeRoleBidSerializer
+
+    def get_queryset(self):
+        return super().get_queryset().select_related('user')
