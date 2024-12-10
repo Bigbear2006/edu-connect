@@ -1,6 +1,8 @@
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins
 from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -55,6 +57,30 @@ class TaskViewSet(ModelViewSet):
     def completed(self, request: Request, pk: int):
         completed = models.CompletedTask.objects.filter(task_id=pk)
         data = serializers.CompletedTaskSerializer(completed, many=True).data
+        return Response(data, 200)
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'is_right': openapi.Schema(type=openapi.TYPE_BOOLEAN),
+            },
+        ),
+        manual_parameters=[
+            openapi.Parameter(
+                'solution_id',
+                openapi.IN_QUERY,
+                required=True,
+                type=openapi.TYPE_INTEGER,
+            ),
+        ],
+    )
+    @action(['POST'], True, 'evaluate', 'evaluate-task')
+    def evaluate(self, request: Request, pk: int):
+        solution_id = request.query_params.get('solution_id', None)
+        obj = get_object_or_404(models.CompletedTask, pk=solution_id)
+        obj.is_right = request.data.get('is_right', False)
+        data = serializers.CompletedTaskSerializer(obj).data
         return Response(data, 200)
 
 
