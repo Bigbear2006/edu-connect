@@ -1,17 +1,17 @@
 # Django + Django REST Framework template
 
 ## CI/CD badges
-[![pipeline Status](https://github.com/Bigbear2006/django-drf-template/actions/workflows/check.yml/badge.svg)](https://github.com/Bigbear2006/django-drf-template/actions/workflows/check.yml/badge.svg)
-[![pipeline Status](https://github.com/Bigbear2006/django-drf-template/actions/workflows/deploy.yml/badge.svg)](https://github.com/Bigbear2006/django-drf-template/actions/workflows/deploy.yml/badge.svg)
+[![pipeline Status](https://github.com/Bigbear2006/edu-connect/actions/workflows/check.yml/badge.svg)](https://github.com/Bigbear2006/django-drf-template/actions/workflows/check.yml/badge.svg)
+[![pipeline Status](https://github.com/Bigbear2006/edu-connect/actions/workflows/deploy.yml/badge.svg)](https://github.com/Bigbear2006/django-drf-template/actions/workflows/deploy.yml/badge.svg)
 
 ## Languages
-![Languages](https://img.shields.io/badge/Languages-3-blue?logo=github)
+![Languages](https://img.shields.io/badge/Languages-7-blue?logo=github)
 ![Python](https://img.shields.io/badge/Python-3.11-FFD343?logo=python&logoColor=blue)
 ![Dockerfile](https://img.shields.io/badge/Dockerfile-Docker-2496ED?logo=docker&logoColor=white)
 ![Shell](https://img.shields.io/badge/Shell-Script-4EAA25?logo=shell&logoColor=white)
 
 ## Clone repository
-`git clone https://github.com/Bigbear2006/django-drf-template.git`
+`git clone https://github.com/Bigbear2006/edu-connect.git`
 
 ## Generate Django SECRET_KEY
 ```shell
