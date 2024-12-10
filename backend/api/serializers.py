@@ -42,6 +42,12 @@ class CompletedTaskSerializer(ModelSerializer):
         validated_data.pop('is_right', None)
         return super(CompletedTaskSerializer, self).create(validated_data)
 
+    def to_representation(self, instance):
+        data = super(CompletedTaskSerializer, self).to_representation(instance)
+        if self.context.get('user_detail', False):
+            data['user'] = UserSerializer(instance.user).data
+        return data
+
 
 class ChangeRoleBidSerializer(ModelSerializer):
     class Meta:

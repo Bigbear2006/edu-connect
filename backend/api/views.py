@@ -55,8 +55,15 @@ class TaskViewSet(ModelViewSet):
 
     @action(['GET'], True, 'completed', 'completed-tasks')
     def completed(self, request: Request, pk: int):
-        completed = models.CompletedTask.objects.filter(task_id=pk)
-        data = serializers.CompletedTaskSerializer(completed, many=True).data
+        completed = models.CompletedTask.objects.filter(
+            task_id=pk,
+        ).select_related('user')
+
+        data = serializers.CompletedTaskSerializer(
+            completed,
+            context={'user_detail': True},
+            many=True,
+        ).data
         return Response(data, 200)
 
     @swagger_auto_schema(
