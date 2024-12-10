@@ -80,6 +80,7 @@ class TaskViewSet(ModelViewSet):
         solution_id = request.query_params.get('solution_id', None)
         obj = get_object_or_404(models.CompletedTask, pk=solution_id)
         obj.is_right = request.data.get('is_right', False)
+        obj.save()
         data = serializers.CompletedTaskSerializer(obj).data
         return Response(data, 200)
 
@@ -149,3 +150,19 @@ class JobApplicationViewSet(mixins.CreateModelMixin, GenericViewSet):
             .get_queryset()
             .select_related('user')
         )
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'accepted': openapi.Schema(type=openapi.TYPE_BOOLEAN),
+            },
+        ),
+    )
+    @action(['POST'], True, 'accept', 'accept-application')
+    def accept(self, request: Request, pk: int):
+        obj = self.get_object()
+        obj.accepted = request.data.get('accepted', False)
+        obj.save()
+        data = serializers.JobApplicationSerializer(obj).data
+        return Response(data, 200)

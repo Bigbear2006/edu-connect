@@ -75,6 +75,7 @@ class JobApplication(models.Model):
     job = models.ForeignKey(Job, models.CASCADE, 'applications')
     user = models.ForeignKey(User, models.CASCADE, 'applications')
     created_at = models.DateTimeField(auto_now_add=True)
+    accepted = models.BooleanField(null=True)
     objects: models.Manager
 
 

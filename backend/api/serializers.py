@@ -79,6 +79,8 @@ class JobApplicationSerializer(ModelSerializer):
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
+        validated_data.pop('accepted', None)
+
         try:
             return models.JobApplication.objects.get(
                 user=validated_data['user'],
