@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
 
       try {
         const refreshToken = localStorage.getItem('refresh');
-        const response = await axios.post('http://fvbit.ru/api/auth/user/refresh-token/', {
+        const response = await axios.post('https://fvbit.ru/api/auth/user/refresh-token/', {
           refresh: refreshToken,
         });
         const { access } = response.data;

@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getCourses } from '../api/courses';
-
-interface Course {
-	id: string
-  title: string;
-  description: string;
-}
+import { Course } from '../types/course';
 
 export const CoursesItems = () => {
   const [courses, setCourses] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -38,7 +36,11 @@ export const CoursesItems = () => {
                 <div className="courses__item-title">{el.title}</div>
                 <div className="courses__item-desc">{el.description}</div>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <button className="courses__item-button">Перейти</button>
+                  <button
+                    onClick={() => navigate(`/tasks/${el.id}`)}
+                    className="courses__item-button">
+                    Перейти
+                  </button>
                 </div>
               </div>
             </div>

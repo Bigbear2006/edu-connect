@@ -19,6 +19,7 @@
 		row-gap: 40px;
   }
 
+
   &__item {
     border: 1px solid rgb(200, 200, 200);
     border-radius: 15px;
@@ -75,4 +76,7 @@
 			}
     }
   }
+}
+.tasks__items {
+	grid-template-columns: repeat(4, 1fr);
 }

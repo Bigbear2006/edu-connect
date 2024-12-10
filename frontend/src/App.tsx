@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { Login, Register } from './pages';
+import { Login, Profile, Register, Tasks } from './pages';
 import { Courses } from './pages/Courses';
 import { ProtectedRoute } from './ProtectedRoutes';
 import './sass/app.scss';
@@ -15,6 +15,22 @@ export const App = () => {
         element={
           <ProtectedRoute>
             <Courses />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tasks/:id"
+        element={
+          <ProtectedRoute>
+            <Tasks />
           </ProtectedRoute>
         }
       />

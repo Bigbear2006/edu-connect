@@ -1,6 +1,7 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 export const Header = () => {
+	const navigate = useNavigate()
   return (
     <div className="wrapper">
       <header className="header">
@@ -27,7 +28,7 @@ export const Header = () => {
               </li>
             </ul>
           </nav>
-          <button className="header__button">
+          <button onClick={() => navigate('/profile')} className="header__button">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="22"

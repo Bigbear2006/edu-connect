@@ -1,5 +1,4 @@
-import { axiosInstance } from "./instance";
-
+import { axiosInstance } from './instance';
 
 export const userAuth = async (email: string, password: string) => {
   const data = { email, password };
