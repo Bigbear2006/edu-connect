@@ -35,3 +35,15 @@ export const processingTask = async (id: string, solutionId: string) => {
     console.log('Ошибка', error);
   }
 };
+
+export const createTask = async (title: string, description: string, course: string) => {
+  const data = { title, description, course };
+
+  try {
+    const response = await axiosInstance.post('/tasks/', data);
+    return response.data;
+  } catch (error) {
+    console.log('Ошибка', error);
+    throw error;
+  }
+};

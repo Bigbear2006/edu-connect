@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
+  createTask,
   getCurrentCompletedTasks,
   getTasksCurrentCourse,
   postSolution,
@@ -28,6 +29,9 @@ export const TasksItems = () => {
   const navigate = useNavigate();
 
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [completedTasks, setCompletedTasks] = useState<CompletedTask[]>([]);
   const [isTextAreaVisible, setIsTextAreaVisible] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string>('');
@@ -84,6 +88,20 @@ export const TasksItems = () => {
     }
   };
 
+  const handleAddTask = async () => {
+    try {
+      if (!id) {
+        console.log('ID курса не найден');
+        return;
+      }
+      const taskId = await createTask(title, description, id);
+      console.log('Задача добавлена с id:', taskId);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.log('Ошибка при добавлении задачи', error);
+    }
+  };
+
   const handleSubmitResponse = async () => {
     if (selectedTaskId && responseText) {
       try {
@@ -130,69 +148,108 @@ export const TasksItems = () => {
           К сожалению задач нет...
         </div>
       ) : (
-        <>
-          <div className="courses__title">Задачи</div>
+          <>
+            <div className="courses__title">Задачи</div>
 
-          <div className="courses__items tasks__items">
-            {tasks.map((el: Task) => (
-              <div onClick={() => handleTaskClick(el.id)} key={el.id} className="courses__item">
-                <img
-                  src="https://blog.coursify.me/wp-content/uploads/2018/08/plan-your-online-course.jpg"
-                  alt="course"
-                  className="courses__item-img"
-                />
-                <div className="courses__item-content">
-                  <div className="courses__item-title">{el.title}</div>
-                  <div style={{ marginBottom: '20px' }} className="courses__item-desc">
-                    {el.description}
+            <button className="vacancies-page__add-btn" onClick={() => setIsModalOpen(true)}>
+              Добавить задачу
+            </button>
+
+            {isModalOpen && (
+                <div className="vacancies-page__modal">
+                  <div className="vacancies-page__modal-content">
+                    <button type="button" onClick={() => setIsModalOpen(false)}>
+                      &times;
+                    </button>
+                    <h2>Добавить задачу</h2>
+                    <form onSubmit={(e) => e.preventDefault()}>
+                      <label>
+                        Название задачи:
+                        <input
+                            type="text"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            required
+                        />
+                      </label>
+                      <label>
+                        Описание задачи:
+                        <input
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            required
+                        />
+                      </label>
+                      <div className="vacancies-page__modal-actions">
+                        <button type="submit" onClick={handleAddTask}>
+                          Добавить
+                        </button>
+                      </div>
+                    </form>
                   </div>
                 </div>
+            )}
 
-                {isTextAreaVisible && role === 'Студент' && selectedTaskId === el.id && (
-                  <div className="response-area">
-                    <textarea
-                      value={responseText}
-                      onChange={(e) => setResponseText(e.target.value)}
-                      placeholder="Введите ваш ответ..."
+            <div className="courses__items tasks__items">
+              {tasks.map((el: Task) => (
+                  <div onClick={() => handleTaskClick(el.id)} key={el.id} className="courses__item">
+                    <img
+                        src="https://blog.coursify.me/wp-content/uploads/2018/08/plan-your-online-course.jpg"
+                        alt="course"
+                        className="courses__item-img"
                     />
-                    <button onClick={handleSubmitResponse}>Отправить</button>
-                  </div>
-                )}
+                    <div className="courses__item-content">
+                      <div className="courses__item-title">{el.title}</div>
+                      <div style={{marginBottom: '20px'}} className="courses__item-desc">
+                        {el.description}
+                      </div>
+                    </div>
 
-                {role === 'Студент' && (
-                  <div className="completed-task">
-                    <h4>Статус:</h4>
-                    <div className="job-card__apply-btn">
+                    {isTextAreaVisible && role === 'Студент' && selectedTaskId === el.id && (
+                        <div className="response-area">
+                    <textarea
+                        value={responseText}
+                        onChange={(e) => setResponseText(e.target.value)}
+                        placeholder="Введите ваш ответ..."
+                    />
+                          <button onClick={handleSubmitResponse}>Отправить</button>
+                        </div>
+                    )}
+
+                    {role === 'Студент' && (
+                        <div className="completed-task">
+                          <h4>Статус:</h4>
+                          <div className="job-card__apply-btn">
                       <span
-                        style={{
-                          color: el.is_right === true ? 'green' : 'grey', 
-                        }}>
+                          style={{
+                            color: el.is_right === true ? 'green' : 'grey',
+                          }}>
                         {el.is_right === true ? 'Правильное' : 'Не оценено'}
                       </span>
-                    </div>
-                  </div>
-                )}
-
-                {role === 'Учитель' &&
-                  completedTasks.length > 0 &&
-                  completedTasks.map(
-                    (completedTask) =>
-                      completedTask.task === Number(el.id) && (
-                        <div key={completedTask.id} className="completed-task">
-                          <div className="completed-task-solition">{completedTask.solution}</div>
-                          <div className="completed-task-button">
-                            <button
-                              onClick={() => processingTask(completedTask.id, completedTask.id)}>
-                              Принять
-                            </button>
                           </div>
                         </div>
-                      ),
-                  )}
-              </div>
-            ))}
-          </div>
-        </>
+                    )}
+
+                    {role === 'Учитель' &&
+                        completedTasks.length > 0 &&
+                        completedTasks.map(
+                            (completedTask) =>
+                                completedTask.task === Number(el.id) && (
+                                    <div key={completedTask.id} className="completed-task">
+                                      <div className="completed-task-solition">{completedTask.solution}</div>
+                                      <div className="completed-task-button">
+                                        <button
+                                            onClick={() => processingTask(completedTask.id, completedTask.id)}>
+                                          Принять
+                                        </button>
+                                      </div>
+                                    </div>
+                                ),
+                        )}
+                  </div>
+              ))}
+            </div>
+          </>
       )}
     </>
   );

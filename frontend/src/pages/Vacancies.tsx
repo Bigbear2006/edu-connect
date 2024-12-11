@@ -30,7 +30,7 @@ const Vacancies: React.FC = () => {
   return (
       <div>
         <Header />
-        <div className="vacancies-page">
+        <div className="container">
           <h1 className="vacancies-page__title">Вакансии</h1>
           <button className="vacancies-page__add-btn" onClick={() => setIsModalOpen(true)}>
             Добавить вакансию
