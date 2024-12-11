@@ -26,6 +26,18 @@ class TaskSerializer(ModelSerializer):
         validated_data['created_by'] = self.context['request'].user
         return super(TaskSerializer, self).create(validated_data)
 
+    def to_representation(self, instance):
+        data = super(TaskSerializer, self).to_representation(instance)
+        data['is_right'] = self.context[
+            'request'
+        ].user.id in instance.completed_by_users.filter(
+            is_right=True,
+        ).values_list(
+            'user_id',
+            flat=True,
+        )
+        return data
+
 
 class CompletedTaskSerializer(ModelSerializer):
     class Meta:
