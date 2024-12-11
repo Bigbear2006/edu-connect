@@ -28,14 +28,10 @@ class TaskSerializer(ModelSerializer):
 
     def to_representation(self, instance):
         data = super(TaskSerializer, self).to_representation(instance)
-        data['is_right'] = self.context[
-            'request'
-        ].user.id in instance.completed_by_users.filter(
+        data['is_right'] = instance.completed_by_users.filter(
+            user=self.context['request'].user,
             is_right=True,
-        ).values_list(
-            'user_id',
-            flat=True,
-        )
+        ).exists()
         return data
 
 

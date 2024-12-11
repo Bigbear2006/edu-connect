@@ -24,7 +24,11 @@ class CourseViewSet(ModelViewSet):
     @action(['GET'], True, 'tasks', 'course-tasks')
     def tasks(self, request: Request, pk: int):
         tasks = models.Task.objects.filter(course_id=pk)
-        data = serializers.TaskSerializer(instance=tasks, many=True).data
+        data = serializers.TaskSerializer(
+            instance=tasks,
+            context=self.get_serializer_context(),
+            many=True,
+        ).data
         return Response(data, 200)
 
 
