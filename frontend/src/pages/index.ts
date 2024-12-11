@@ -4,3 +4,5 @@ export * from './Profile';
 export * from './Register';
 export * from './Tasks';
 export * from './Webinar';
+export * from './Forum'
+

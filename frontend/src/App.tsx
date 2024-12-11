@@ -1,5 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Courses, Login, Profile, Register, Tasks, Webinar } from './pages';
+import { Forum } from './pages/Forum.tsx';
+import { ForumPage } from './pages/ForumPage.tsx';
 import Vacancies from './pages/Vacancies.tsx';
 import { ProtectedRoute } from './ProtectedRoutes';
 import './sass/app.scss';
@@ -47,6 +49,22 @@ export const App = () => {
         element={
           <ProtectedRoute>
             <Webinar />
+          </ProtectedRoute>
+        }
+      />
+      <Route>
+        path="/forum" element=
+        {
+          <ProtectedRoute>
+            <Forum />
+          </ProtectedRoute>
+        }
+      </Route>
+      <Route
+        path="/forum/:id"
+        element={
+          <ProtectedRoute>
+            <ForumPage />
           </ProtectedRoute>
         }
       />
