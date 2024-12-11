@@ -90,7 +90,7 @@ class UserJobsApplicationsAPIView(ListAPIView):
     serializer_class = JobApplicationSerializer
 
     def get_queryset(self):
-        return self.request.user.applications
+        return self.request.user.applications.select_related('job')
 
     def get_serializer_context(self):
         context = super(

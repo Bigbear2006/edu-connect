@@ -53,10 +53,33 @@ class TaskViewSet(ModelViewSet):
         self.perform_create(serializer)
         return Response(serializer.data, 201)
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'is_right',
+                openapi.IN_QUERY,
+                type=openapi.TYPE_BOOLEAN,
+            ),
+        ],
+    )
     @action(['GET'], True, 'completed', 'completed-tasks')
     def completed(self, request: Request, pk: int):
-        completed = models.CompletedTask.objects.filter(task_id=pk)
-        data = serializers.CompletedTaskSerializer(completed, many=True).data
+        completed = models.CompletedTask.objects.filter(
+            task_id=pk,
+        ).select_related('user')
+
+        bool_vars = {'true': True, 'false': False}
+        is_right = bool_vars.get(
+            request.query_params.get('is_right', None),
+            None,
+        )
+        completed = completed.filter(is_right=is_right)
+
+        data = serializers.CompletedTaskSerializer(
+            completed,
+            context={'user_detail': True},
+            many=True,
+        ).data
         return Response(data, 200)
 
     @swagger_auto_schema(
@@ -80,6 +103,7 @@ class TaskViewSet(ModelViewSet):
         solution_id = request.query_params.get('solution_id', None)
         obj = get_object_or_404(models.CompletedTask, pk=solution_id)
         obj.is_right = request.data.get('is_right', False)
+        obj.save()
         data = serializers.CompletedTaskSerializer(obj).data
         return Response(data, 200)
 
@@ -149,3 +173,19 @@ class JobApplicationViewSet(mixins.CreateModelMixin, GenericViewSet):
             .get_queryset()
             .select_related('user')
         )
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'accepted': openapi.Schema(type=openapi.TYPE_BOOLEAN),
+            },
+        ),
+    )
+    @action(['POST'], True, 'accept', 'accept-application')
+    def accept(self, request: Request, pk: int):
+        obj = self.get_object()
+        obj.accepted = request.data.get('accepted', False)
+        obj.save()
+        data = serializers.JobApplicationSerializer(obj).data
+        return Response(data, 200)

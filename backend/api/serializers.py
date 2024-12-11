@@ -26,6 +26,18 @@ class TaskSerializer(ModelSerializer):
         validated_data['created_by'] = self.context['request'].user
         return super(TaskSerializer, self).create(validated_data)
 
+    def to_representation(self, instance):
+        data = super(TaskSerializer, self).to_representation(instance)
+        data['is_right'] = self.context[
+            'request'
+        ].user.id in instance.completed_by_users.filter(
+            is_right=True,
+        ).values_list(
+            'user_id',
+            flat=True,
+        )
+        return data
+
 
 class CompletedTaskSerializer(ModelSerializer):
     class Meta:
@@ -41,6 +53,12 @@ class CompletedTaskSerializer(ModelSerializer):
         )
         validated_data.pop('is_right', None)
         return super(CompletedTaskSerializer, self).create(validated_data)
+
+    def to_representation(self, instance):
+        data = super(CompletedTaskSerializer, self).to_representation(instance)
+        if self.context.get('user_detail', False):
+            data['user'] = UserSerializer(instance.user).data
+        return data
 
 
 class ChangeRoleBidSerializer(ModelSerializer):
@@ -79,6 +97,8 @@ class JobApplicationSerializer(ModelSerializer):
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
+        validated_data.pop('accepted', None)
+
         try:
             return models.JobApplication.objects.get(
                 user=validated_data['user'],
