@@ -30,5 +30,10 @@ urlpatterns = [
         views.UserDetailInfoAPIView.as_view(),
         name='user-detail-info',
     ),
+    path(
+        'user/<int:pk>/portfolio/',
+        views.UserPortfolioAPIView.as_view(),
+        name='user-portfolio',
+    ),
     path('users/', views.UserListAPIView.as_view(), name='user-list'),
 ]

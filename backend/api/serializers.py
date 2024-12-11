@@ -1,11 +1,19 @@
 from rest_framework.generics import get_object_or_404
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import (
+    BooleanField,
+    IntegerField,
+    ModelSerializer,
+)
 
 from api import models
 from jwt_auth.serializers import UserSerializer
 
 
 class CourseSerializer(ModelSerializer):
+    tasks_count = IntegerField(read_only=True)
+    right_count = IntegerField(read_only=True)
+    fully_completed = BooleanField(read_only=True)
+
     class Meta:
         model = models.Course
         fields = '__all__'
