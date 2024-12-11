@@ -86,3 +86,15 @@
 .tasks__items {
 	grid-template-columns: repeat(3, 1fr);
 }
+
+.completed-task {
+  display: flex;
+  padding: 20px;
+  justify-content: space-between;
+  align-items: center;
+
+  button {
+    padding: 10px;
+    border-radius: 10px;
+  }
+}
