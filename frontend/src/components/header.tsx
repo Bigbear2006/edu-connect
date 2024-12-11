@@ -26,6 +26,12 @@ export const Header = () => {
                   Форум
                 </NavLink>
               </li>
+              <li>
+                <NavLink to={'/webinar'} className={({ isActive }) => (isActive ? 'active' : '')}>
+                  Вебинары
+                </NavLink>
+              </li>
+
             </ul>
           </nav>
           <button onClick={() => navigate('/profile')} className="header__button">

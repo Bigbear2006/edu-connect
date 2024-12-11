@@ -1,8 +1,8 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { Login, Profile, Register, Tasks, Courses } from './pages';
+import { Courses, Login, Profile, Register, Tasks, Webinar } from './pages';
+import Vacancies from './pages/Vacancies.tsx';
 import { ProtectedRoute } from './ProtectedRoutes';
 import './sass/app.scss';
-import Vacancies from "./pages/Vacancies.tsx";
 
 export const App = () => {
   return (
@@ -39,6 +39,14 @@ export const App = () => {
         element={
           <ProtectedRoute>
             <Tasks />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/webinar"
+        element={
+          <ProtectedRoute>
+            <Webinar />
           </ProtectedRoute>
         }
       />
