@@ -1,11 +1,19 @@
 from rest_framework.generics import get_object_or_404
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import (
+    BooleanField,
+    IntegerField,
+    ModelSerializer,
+)
 
 from api import models
 from jwt_auth.serializers import UserSerializer
 
 
 class CourseSerializer(ModelSerializer):
+    tasks_count = IntegerField(read_only=True)
+    right_count = IntegerField(read_only=True)
+    fully_completed = BooleanField(read_only=True)
+
     class Meta:
         model = models.Course
         fields = '__all__'
@@ -28,14 +36,10 @@ class TaskSerializer(ModelSerializer):
 
     def to_representation(self, instance):
         data = super(TaskSerializer, self).to_representation(instance)
-        data['is_right'] = self.context[
-            'request'
-        ].user.id in instance.completed_by_users.filter(
+        data['is_right'] = instance.completed_by_users.filter(
+            user=self.context['request'].user,
             is_right=True,
-        ).values_list(
-            'user_id',
-            flat=True,
-        )
+        ).exists()
         return data
 
 

@@ -1,15 +1,23 @@
+from django.db.models import BooleanField, Case, Count, F, Q, When
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.generics import (
     CreateAPIView,
     ListAPIView,
+    RetrieveAPIView,
     RetrieveUpdateAPIView,
 )
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework_simplejwt.views import token_obtain_pair, token_refresh
 
+from api.models import Course
 from api.permissions import IsAdmin
-from api.serializers import CompletedTaskSerializer, JobApplicationSerializer
+from api.serializers import (
+    CompletedTaskSerializer,
+    CourseSerializer,
+    JobApplicationSerializer,
+)
 from jwt_auth.models import User
 from jwt_auth.serializers import UserSerializer
 
@@ -99,6 +107,38 @@ class UserJobsApplicationsAPIView(ListAPIView):
         ).get_serializer_context()
         context['job_detail'] = True
         return context
+
+
+class UserPortfolioAPIView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CourseSerializer
+
+    def get_queryset(self):
+        return Course.objects.annotate(
+            tasks_count=Count('tasks'),
+            right_count=Count(
+                'tasks__completed_by_users__is_right',
+                filter=Q(tasks__completed_by_users__is_right=True),
+            ),
+            fully_completed=Case(
+                When(right_count=F('tasks_count'), then=True),
+                default=False,
+                output_field=BooleanField(),
+            ),
+        ).filter(
+            pk__in=(
+                self.request.user.completed_tasks.select_related(
+                    'task__course',
+                )
+                .values_list('task__course', flat=True)
+                .distinct()
+            ),
+        )
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_queryset().all()
+        serializer = self.get_serializer(instance, many=True)
+        return Response(serializer.data)
 
 
 @method_decorator(

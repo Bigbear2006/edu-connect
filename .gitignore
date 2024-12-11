@@ -4,6 +4,7 @@ data
 __pycache__
 backend/static
 backend/media
+build
 
 .env
 backend/db.sqlite3
