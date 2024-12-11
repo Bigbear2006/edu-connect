@@ -13,7 +13,7 @@ export const useVacancies = () => {
                 setLoading(true);
                 const vacanciesResponse = await getVacancies();
                 setVacancies(vacanciesResponse);
-            } catch (error) {
+            } catch  {
                 setError('Не удалось загрузить вакансии');
             } finally {
                 setLoading(false);
