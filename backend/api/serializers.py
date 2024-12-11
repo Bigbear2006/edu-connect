@@ -122,3 +122,44 @@ class JobApplicationSerializer(ModelSerializer):
         if self.context.get('job_detail', False):
             data['job'] = JobSerializer(instance.job).data
         return data
+
+
+class ForumSerializer(ModelSerializer):
+    class Meta:
+        model = models.Forum
+        fields = '__all__'
+        read_only_fields = ('created_by',)
+
+    def create(self, validated_data):
+        validated_data['created_by'] = self.context['request'].user
+        return super(ForumSerializer, self).create(validated_data)
+
+    def to_representation(self, instance):
+        data = super(ForumSerializer, self).to_representation(
+            instance,
+        )
+        data['created_by'] = UserSerializer(instance.created_by).data
+        if self.context['view'].action == 'retrieve':
+            data['comments'] = CommentSerializer(
+                instance.comments.all(),
+                many=True,
+            ).data
+        return data
+
+
+class CommentSerializer(ModelSerializer):
+    class Meta:
+        model = models.Comment
+        fields = '__all__'
+        read_only_fields = ('user',)
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super(CommentSerializer, self).create(validated_data)
+
+    def to_representation(self, instance):
+        data = super(CommentSerializer, self).to_representation(
+            instance,
+        )
+        data['user'] = UserSerializer(instance.user).data
+        return data

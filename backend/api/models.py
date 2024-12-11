@@ -110,3 +110,32 @@ class JobApplication(models.Model):
 #     solution = models.TextField()
 #     created_at = models.DateTimeField(auto_now_add=True)
 #     objects: models.Manager
+
+
+class Forum(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    created_by = models.ForeignKey(
+        User,
+        models.SET_NULL,
+        'forums',
+        null=True,
+    )
+    objects: models.Manager
+
+    def __str__(self):
+        return self.title
+
+
+class Comment(models.Model):
+    forum = models.ForeignKey(Forum, models.CASCADE, 'comments')
+    text = models.TextField()
+    user = models.ForeignKey(
+        User,
+        models.CASCADE,
+        'comments',
+    )
+    objects: models.Manager
+
+    def __str__(self):
+        return self.text
