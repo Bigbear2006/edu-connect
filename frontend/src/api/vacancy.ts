@@ -37,3 +37,12 @@ export const getRespondes = async () => {
     console.log('Ошибка', error);
   }
 };
+
+export const currentApplication = async (id: string) => {
+  try {
+    const response = await axiosInstance.get(`/jobs/${id}/applications/`);
+    return response.data;
+  } catch (error) {
+    console.log('Ошибка', error);
+  }
+};

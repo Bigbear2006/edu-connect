@@ -1,9 +1,11 @@
+import { faCrown, faUserGraduate } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getChangeRole } from '../api/admin';
 import { getCourses } from '../api/courses';
-import { getCurrentUser } from '../api/user';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCrown, faUserGraduate } from '@fortawesome/free-solid-svg-icons';
+import { changeRole, getCurrentUser } from '../api/user';
+import { currentApplication } from '../api/vacancy';
 import { Header } from '../components';
 import CourseCard from '../components/course-card';
 import { Course } from '../types/course';
@@ -12,6 +14,8 @@ import { User } from '../types/user';
 export const Profile = () => {
   const [courses, setCourses] = useState([]);
   const [user, setUser] = useState<User>();
+  const [applications, setApplications] = useState([]);
+  const [bids, setBids] = useState([]);
 
   const navigate = useNavigate();
 
@@ -32,8 +36,32 @@ export const Profile = () => {
         console.log(error);
       }
     };
-    fetchCourses();
+
+    const fetchCurrentApplication = async () => {
+      try {
+        const response = await currentApplication('1');
+        setApplications(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const fetchChangeBids = async () => {
+      try {
+        const response = await getChangeRole();
+        setBids(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     fetchCurrentUser();
+    fetchChangeBids();
+
+    if (user?.role !== 'Админ') {
+      fetchCurrentApplication();
+      fetchCourses();
+    }
   }, []);
 
   const logout = () => {
@@ -74,25 +102,58 @@ export const Profile = () => {
               <p>Роль: {user?.role}</p>
               <p>Почта: {user?.email}</p>
             </div>
-            <div className="profile-buttons-container">
-              <button className="profile-button-change-role">
-                <FontAwesomeIcon icon={faCrown} style={{marginRight: "8px"}}/>
-                Стать админом
-              </button>
-              <button className="profile-button-change-role">
-                <FontAwesomeIcon icon={faUserGraduate} style={{marginRight: "8px"}}/>
-                Стать преподавателем
-              </button>
-            </div>
-            <button onClick={logout} className="profile-button">Выйти</button>
+            {user?.role !== 'Админ' && (
+              <div className="profile-buttons-container">
+                <button
+                  onClick={() => changeRole('Работодатель')}
+                  className="profile-button-change-role">
+                  <FontAwesomeIcon icon={faCrown} style={{ marginRight: '8px' }} />
+                  Стать работодателем
+                </button>
+                <button
+                  onClick={() => changeRole('Учитель')}
+                  className="profile-button-change-role">
+                  <FontAwesomeIcon icon={faUserGraduate} style={{ marginRight: '8px' }} />
+                  Стать преподавателем
+                </button>
+              </div>
+            )}
+
+            <button onClick={logout} className="profile-button">
+              Выйти
+            </button>
           </div>
         </div>
-        <div className="profile-content__courses">
-          <h1>Пройденные курсы</h1>
-          {courses.map((el: Course) => (
-              <CourseCard id={el.id} title={el.title} description={el.description}/>
-          ))}
-        </div>
+        {user?.role === 'Учитель' && (
+          <div className="profile-content__courses">
+            <h1>Пройденные курсы</h1>
+            {courses.map((el: Course) => (
+              <CourseCard id={el.id} title={el.title} description={el.description} />
+            ))}
+          </div>
+        )}
+        {user?.role === 'Работодатель' && (
+          <div className="profile-content__courses">
+            {applications.map((el) => (
+              <div key={el.id}>
+                {' '}
+                <div>{el.user.username}</div>
+                <div>{el.job}</div>
+                <div>{el.created_at}</div>
+              </div>
+            ))}
+          </div>
+        )}
+        {user?.role === 'Админ' && (
+          <div>
+            {bids.map((bid) => (
+              <div>
+                <div>{bid.user.username}</div>
+                <div>{bid.role}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

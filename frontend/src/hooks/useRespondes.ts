@@ -13,7 +13,7 @@ export const useRespondes = () => {
                 setLoading(true);
                 const respondesResponse = await getRespondes();
                 setRespondes(respondesResponse);
-            } catch (error) {
+            } catch  {
                 setError('Не удалось загрузить отклики');
             } finally {
                 setLoading(false);
