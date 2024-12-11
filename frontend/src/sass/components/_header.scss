@@ -1,0 +1,54 @@
+.header {
+  background-color: $dark-green;
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    padding: 30px 20px;
+  }
+
+  &__logo {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    a {
+      color: white;
+    }
+  }
+
+  &__nav {
+    ul {
+      display: flex;
+      gap: 30px;
+      font-size: 1.15rem;
+
+      li {
+        a {
+          color: white;
+          padding-bottom: 3px;
+
+          &:hover {
+            border-bottom: 2px solid #e1e1e1;
+          }
+
+          &.active {
+            border-bottom: 2px solid #e1e1e1;
+          }
+        }
+      }
+    }
+  }
+
+  &__button {
+    background-color: transparent;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.15rem;
+    padding-bottom: 3px;
+  }
+}

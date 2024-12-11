@@ -1,0 +1,54 @@
+@import '../libs/variables';
+
+.course-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  transition: transform 0.3s ease;
+  margin: 20px;
+	transition: 0.3s ease;
+	cursor: pointer;
+
+	&:hover {
+		transform: scale(1.01);
+		transition: 0.3s ease;
+	}
+
+  .course-card-background {
+    width: 100%;
+    height: 180px;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    border-radius: 8px 8px 0 0;
+    transition: transform 0.3s ease;
+  }
+
+  .course-card-content {
+    padding: 20px;
+    background-size: cover;
+    position: relative;
+
+    .course-card-title {
+      font-size: 1.6rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .course-card-description {
+      font-size: 1rem;
+      color: rgb(242, 242, 242);
+      margin-bottom: 15px;
+    }
+
+
+  }
+}
