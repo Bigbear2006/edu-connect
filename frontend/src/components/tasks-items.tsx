@@ -11,6 +11,7 @@ import { Course } from '../types/course';
 
 interface Task extends Course {
   course: number;
+  is_right?: boolean;
 }
 
 interface CompletedTask {
@@ -152,7 +153,6 @@ export const TasksItems = () => {
                   </div>
                 </div>
 
-                {/* Отображение текстового поля только для студента */}
                 {isTextAreaVisible && role === 'Студент' && selectedTaskId === el.id && (
                   <div className="response-area">
                     <textarea
@@ -164,20 +164,32 @@ export const TasksItems = () => {
                   </div>
                 )}
 
-                {/* Отображение статуса выполнения задачи для студентов */}
                 {role === 'Студент' && (
-                  <div className="completed-task">
-                    <h4>Статус:</h4>
-                    <p>{el.is_right  ? 'Правильное' : 'Не оценено'}</p>
-                  </div>
+                    <div className="completed-task">
+                      <h4>Статус:</h4>
+                      <button
+                          className="job-card__apply-btn"
+                          disabled={
+                            completedTasks.some(
+                                (completedTask) => completedTask.task === Number(el.id) && completedTask.is_right !== null
+                            )
+                          }
+                      >
+                        {completedTasks.some(
+                            (completedTask) => completedTask.task === Number(el.id) && completedTask.is_right
+                        )
+                            ? 'Правильное'
+                            : 'Не оценено'}
+                      </button>
+                    </div>
                 )}
 
-                {/* Отображение решенного решения для учителя */}
+
                 {role === 'Учитель' &&
-                  completedTasks.length > 0 &&
+                    completedTasks.length > 0 &&
                   completedTasks.map(
                     (completedTask) =>
-                      completedTask.task === el.id && (
+                      completedTask.task === Number(el.id) && (
                         <div key={completedTask.id} className="completed-task">
                           <h4>Решение:</h4>
                           <p>{completedTask.solution}</p>
