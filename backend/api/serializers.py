@@ -73,7 +73,13 @@ class ChangeRoleBidSerializer(ModelSerializer):
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
-        return super(ChangeRoleBidSerializer, self).create(validated_data)
+        try:
+            bid = models.ChangeRoleBid.objects.get(user=validated_data['user'])
+            if role := validated_data.get('role', None):
+                bid.role = role
+            return bid
+        except models.ChangeRoleBid.DoesNotExist:
+            return super(ChangeRoleBidSerializer, self).create(validated_data)
 
     def to_representation(self, instance):
         data = super(ChangeRoleBidSerializer, self).to_representation(instance)
