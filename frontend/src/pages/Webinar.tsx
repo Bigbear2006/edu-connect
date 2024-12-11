@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -17,6 +17,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 
+// Определяем интерфейс для звонка
+interface Call {
+  offer?: {
+    type: string;
+    sdp: string;
+  };
+  answer?: {
+    type: string;
+    sdp: string;
+  };
+}
+
+// Компонент Webinar
 export const Webinar: React.FC = () => {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStreams, setRemoteStreams] = useState<MediaStream[]>([]);
@@ -25,11 +38,9 @@ export const Webinar: React.FC = () => {
 
   const pcRef = useRef<RTCPeerConnection | null>(null);
   const webcamVideoRef = useRef<HTMLVideoElement | null>(null);
-  
+
   const servers = {
-    iceServers: [
-      { urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] },
-    ],
+    iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }],
     iceCandidatePoolSize: 10,
   };
 
@@ -58,7 +69,8 @@ export const Webinar: React.FC = () => {
           if (event.candidate) {
             const callDocRef = doc(firestore, 'calls', callId!);
             const offerCandidatesCol = collection(callDocRef, 'offerCandidates');
-            await setDoc(offerCandidatesCol.doc(), event.candidate.toJSON());
+            const offerCandidateDocRef = doc(offerCandidatesCol); // Создает новый документ с авто-генерируемым ID
+            await setDoc(offerCandidateDocRef, event.candidate.toJSON());
           }
         };
 
@@ -78,7 +90,6 @@ export const Webinar: React.FC = () => {
     startWebcam();
 
     return () => {
-      // Cleanup media streams when component unmounts
       localStream?.getTracks().forEach((track) => track.stop());
       pcRef.current?.close();
     };
@@ -94,7 +105,10 @@ export const Webinar: React.FC = () => {
 
     // Get candidates for caller, save to Firestore
     pcRef.current.onicecandidate = (event) => {
-      event.candidate && setDoc(offerCandidatesCol.doc(), event.candidate.toJSON());
+      if (event.candidate) {
+        const offerCandidateDocRef = doc(offerCandidatesCol); // Создает новый документ с авто-генерируемым ID
+        setDoc(offerCandidateDocRef, event.candidate.toJSON());
+      }
     };
 
     // Create offer
@@ -105,8 +119,9 @@ export const Webinar: React.FC = () => {
 
     // Listen for remote answer
     onSnapshot(callDocRef, (snapshot) => {
-      const data = snapshot.data();
+      const data = snapshot.data() as Call; // Привязываем тип Call
       if (data?.answer) {
+				// @ts-ignore
         const answerDescription = new RTCSessionDescription(data.answer);
         pcRef.current?.setRemoteDescription(answerDescription);
       }
@@ -131,17 +146,21 @@ export const Webinar: React.FC = () => {
     const offerCandidatesCol = collection(callDocRef, 'offerCandidates');
 
     pcRef.current.onicecandidate = (event) => {
-      event.candidate && setDoc(answerCandidatesCol.doc(), event.candidate.toJSON());
+      if (event.candidate) {
+        const answerCandidateDocRef = doc(answerCandidatesCol); // Создает новый документ с авто-генерируемым ID
+        setDoc(answerCandidateDocRef, event.candidate.toJSON());
+      }
     };
 
     const callDataSnapshot = await getDoc(callDocRef);
-    
+
     if (callDataSnapshot.exists()) {
-      const callData = callDataSnapshot.data();
-      
+      const callData = callDataSnapshot.data() as Call; // Привязываем тип Call
+
       if (callData?.offer) {
+				// @ts-ignore
         await pcRef.current.setRemoteDescription(new RTCSessionDescription(callData.offer));
-        
+
         // Create an answer to the call
         const answer = await pcRef.current.createAnswer();
         await pcRef.current.setLocalDescription(answer);
@@ -167,24 +186,26 @@ export const Webinar: React.FC = () => {
     <div>
       <h1>Video Chat</h1>
       <div>
-        <input 
-          type="text" 
-          value={inputCallId} 
-          onChange={(e) => setInputCallId(e.target.value)} 
-          placeholder="Введите ID звонка" 
+        <input
+          type="text"
+          value={inputCallId}
+          onChange={(e) => setInputCallId(e.target.value)}
+          placeholder="Введите ID звонка"
         />
         <button onClick={joinCall}>Присоединиться к звонку</button>
       </div>
       <div>
-        <button onClick={startCall} disabled={!!callId}>Начать звонок</button>
+        <button onClick={startCall} disabled={!!callId}>
+          Начать звонок
+        </button>
       </div>
       <div>
         <video ref={webcamVideoRef} autoPlay muted />
         {remoteStreams.map((stream, index) => (
+					// @ts-ignore
           <video key={index} autoPlay muted={false} srcObject={stream} />
         ))}
       </div>
     </div>
   );
 };
-

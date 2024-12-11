@@ -1,3 +1,4 @@
+//@ts-ignore
 import { faCrown, faUserGraduate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
@@ -70,7 +71,7 @@ export const Profile = () => {
       }
     };
 
-    fetchPortfolio(); 
+    fetchPortfolio();
   }, [user]);
 
   useEffect(() => {
@@ -185,7 +186,7 @@ export const Profile = () => {
         {user?.role === 'Работодатель' && (
           <div className="profile-content__courses">
             <div className="reflections">
-              {applications.map((el) => (
+              {applications.map((el: Bid) => (
                 <div className="reflection" key={el.id}>
                   {' '}
                   <div className="reflection__username">{el.user.username}</div>

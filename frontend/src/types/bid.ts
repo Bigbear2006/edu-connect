@@ -6,4 +6,6 @@ export interface Bid {
     username: string;
 		role: string
   };
+	job: number;
+	created_at: string
 }
