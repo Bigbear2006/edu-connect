@@ -53,11 +53,27 @@ class TaskViewSet(ModelViewSet):
         self.perform_create(serializer)
         return Response(serializer.data, 201)
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'is_right',
+                openapi.IN_QUERY,
+                type=openapi.TYPE_BOOLEAN,
+            ),
+        ],
+    )
     @action(['GET'], True, 'completed', 'completed-tasks')
     def completed(self, request: Request, pk: int):
         completed = models.CompletedTask.objects.filter(
             task_id=pk,
         ).select_related('user')
+
+        bool_vars = {'true': True, 'false': False}
+        is_right = bool_vars.get(
+            request.query_params.get('is_right', None),
+            None,
+        )
+        completed = completed.filter(is_right=is_right)
 
         data = serializers.CompletedTaskSerializer(
             completed,

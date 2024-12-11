@@ -1,4 +1,4 @@
-# Django + Django REST Framework template
+# Education Connect
 
 ## CI/CD badges
 [![pipeline Status](https://github.com/Bigbear2006/edu-connect/actions/workflows/check.yml/badge.svg)](https://github.com/Bigbear2006/django-drf-template/actions/workflows/check.yml/badge.svg)
@@ -7,6 +7,10 @@
 ## Languages
 ![Languages](https://img.shields.io/badge/Languages-7-blue?logo=github)
 ![Python](https://img.shields.io/badge/Python-3.11-FFD343?logo=python&logoColor=blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-4.x-blue?logo=TypeScript)
+![SCSS](https://img.shields.io/badge/SCSS-1.0-green)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow?logo=JavaScript)
+![HTML](https://img.shields.io/badge/HTML-5-orange)
 ![Dockerfile](https://img.shields.io/badge/Dockerfile-Docker-2496ED?logo=docker&logoColor=white)
 ![Shell](https://img.shields.io/badge/Shell-Script-4EAA25?logo=shell&logoColor=white)
 
