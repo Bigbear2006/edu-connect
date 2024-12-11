@@ -19,8 +19,8 @@ interface CompletedTask {
   solution: string;
   completed_at: string;
   is_right: boolean | null;
-  task: number; // ID задачи
-  user: number; // ID пользователя
+  task: number; 
+  user: number; 
 }
 
 export const TasksItems = () => {
@@ -34,8 +34,6 @@ export const TasksItems = () => {
   const [responseText, setResponseText] = useState('');
   const [role, setRole] = useState('');
 
-  console.log(completedTasks);
-  console.log(tasks);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -64,12 +62,11 @@ export const TasksItems = () => {
     fetchUser();
   }, [id]);
 
-  // Функция для получения решенных задач по ID
   useEffect(() => {
     const fetchCompletedTasks = async () => {
       if (role === 'Учитель' && selectedTaskId) {
         try {
-          const response = await getCurrentCompletedTasks(selectedTaskId); // Передаем ID задачи
+          const response = await getCurrentCompletedTasks(selectedTaskId); 
           setCompletedTasks(response);
         } catch (error) {
           console.log(error);
@@ -78,21 +75,20 @@ export const TasksItems = () => {
     };
 
     fetchCompletedTasks();
-  }, [role, selectedTaskId]); // Зависимости: роль и выбранный ID задачи
+  }, [role, selectedTaskId]); 
 
   const handleTaskClick = (taskId: string) => {
     if (selectedTaskId !== taskId) {
-      // Если нажали на другую задачу, показать текстовое поле
       setSelectedTaskId(taskId);
       setIsTextAreaVisible(true);
-      setResponseText(''); // Сброс текста при выборе новой задачи
+      setResponseText(''); 
     }
   };
 
   const handleSubmitResponse = async () => {
     if (selectedTaskId && responseText) {
       try {
-        await postSolution(responseText, selectedTaskId); // Используем selectedTaskId
+        await postSolution(responseText, selectedTaskId);
         alert('Ответ отправлен!');
         setIsTextAreaVisible(false);
         setResponseText('');

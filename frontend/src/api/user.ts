@@ -17,3 +17,14 @@ export const changeRole = async (role: string) => {
     console.log('Ошибка', error);
   }
 };
+
+export const changeRoleUser = async (id: string, role: string) => {
+  try {
+    const response = await axiosInstance.patch(`/auth/user/${id}/info/`, { role: role });
+		console.log(response.data);
+		
+    return response.data;
+  } catch (error) {
+    console.log('Ошибка', error);
+  }
+};

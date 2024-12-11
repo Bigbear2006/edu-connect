@@ -2,20 +2,22 @@ import { faCrown, faUserGraduate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getChangeRole } from '../api/admin';
+import { getBids } from '../api/admin';
 import { getCourses } from '../api/courses';
 import { changeRole, getCurrentUser } from '../api/user';
 import { currentApplication } from '../api/vacancy';
-import { Header } from '../components';
+import { BidRole, Header } from '../components';
 import CourseCard from '../components/course-card';
+import { Bid } from '../types/bid';
 import { Course } from '../types/course';
 import { User } from '../types/user';
+import { formatDate } from '../lib';
 
 export const Profile = () => {
   const [courses, setCourses] = useState([]);
   const [user, setUser] = useState<User>();
   const [applications, setApplications] = useState([]);
-  const [bids, setBids] = useState([]);
+  const [bids, setBids] = useState<Bid[]>([]);
 
   const navigate = useNavigate();
 
@@ -46,23 +48,27 @@ export const Profile = () => {
       }
     };
 
-    const fetchChangeBids = async () => {
-      try {
-        const response = await getChangeRole();
-        setBids(response);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     fetchCurrentUser();
-    fetchChangeBids();
 
     if (user?.role !== 'Админ') {
       fetchCurrentApplication();
       fetchCourses();
     }
   }, []);
+
+  useEffect(() => {
+    if (user?.role === 'Админ') {
+      const fetchChangeBids = async () => {
+        try {
+          const response = await getBids();
+          setBids(response);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchChangeBids();
+    }
+  }, [user]);
 
   const logout = () => {
     localStorage.removeItem('access');
@@ -104,18 +110,23 @@ export const Profile = () => {
             </div>
             {user?.role !== 'Админ' && (
               <div className="profile-buttons-container">
-                <button
-                  onClick={() => changeRole('Работодатель')}
-                  className="profile-button-change-role">
-                  <FontAwesomeIcon icon={faCrown} style={{ marginRight: '8px' }} />
-                  Стать работодателем
-                </button>
-                <button
-                  onClick={() => changeRole('Учитель')}
-                  className="profile-button-change-role">
-                  <FontAwesomeIcon icon={faUserGraduate} style={{ marginRight: '8px' }} />
-                  Стать преподавателем
-                </button>
+                {user?.role !== 'Работодатель' && (
+                  <button
+                    onClick={() => changeRole('Работодатель')}
+                    className="profile-button-change-role">
+                    <FontAwesomeIcon icon={faCrown} style={{ marginRight: '8px' }} />
+                    Стать работодателем
+                  </button>
+                )}
+
+                {user?.role !== 'Учитель' && (
+                  <button
+                    onClick={() => changeRole('Учитель')}
+                    className="profile-button-change-role">
+                    <FontAwesomeIcon icon={faUserGraduate} style={{ marginRight: '8px' }} />
+                    Стать преподавателем
+                  </button>
+                )}
               </div>
             )}
 
@@ -126,7 +137,7 @@ export const Profile = () => {
         </div>
         {user?.role === 'Учитель' && (
           <div className="profile-content__courses">
-            <h1>Пройденные курсы</h1>
+            <h1>Курсы</h1>
             {courses.map((el: Course) => (
               <CourseCard id={el.id} title={el.title} description={el.description} />
             ))}
@@ -134,26 +145,19 @@ export const Profile = () => {
         )}
         {user?.role === 'Работодатель' && (
           <div className="profile-content__courses">
-            {applications.map((el) => (
-              <div key={el.id}>
-                {' '}
-                <div>{el.user.username}</div>
-                <div>{el.job}</div>
-                <div>{el.created_at}</div>
-              </div>
-            ))}
+            <div className="reflections">
+              {applications.map((el) => (
+                <div className="reflection" key={el.id}>
+                  {' '}
+                  <div className="reflection__username">{el.user.username}</div>
+                  <div className="reflection__job">{el.job}</div>
+                  <div className="reflection__date">{formatDate(el.created_at)}</div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
-        {user?.role === 'Админ' && (
-          <div>
-            {bids.map((bid) => (
-              <div>
-                <div>{bid.user.username}</div>
-                <div>{bid.role}</div>
-              </div>
-            ))}
-          </div>
-        )}
+        {user?.role === 'Админ' && <BidRole bids={bids} setBids={setBids} />}
       </div>
     </div>
   );

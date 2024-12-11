@@ -132,3 +132,78 @@
     }
   }
 }
+
+.admin {
+	padding: 20px 20px;
+	width: 100%;
+
+	&__title {
+		font-size: 1.5rem;
+		color: #333;
+		font-weight: 500;
+		text-align: center;
+		margin-bottom: 30px;
+	}
+
+	&__items {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	&__item {
+		border: 2px solid rgba(187, 187, 187, 0.973);
+		padding: 20px;
+		display: flex;
+		justify-content: space-between;
+		border-radius: 5px;
+		align-items: center;
+
+		&-buttons {
+			display: flex;
+			gap: 20px;
+		}
+
+		&-btn {
+			padding: 8px 14px;
+			font-size: 1rem;
+			border-radius: 5px;
+			background-color: red;
+			color: white;
+			transition: .3s ease;
+
+			&:hover {
+				transition: .3s ease;
+				transform: translateX(2px);
+			}
+		}
+
+		.admin__item-btn-accept {
+			background-color: rgb(4, 153, 4);
+		}
+	}
+}
+
+.reflections {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding: 20px;
+}
+
+.reflection {
+	border: 1px solid $dark-green;
+	padding: 20px;
+	display: flex;
+	justify-content: space-between;
+	border-radius: 7px;
+
+	&__username {
+		font-size: 1.1rem;
+		font-weight: 500;
+	}
+
+	&__date {
+		color: rgb(99, 99, 99);
+	}
+}
