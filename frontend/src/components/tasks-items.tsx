@@ -144,16 +144,22 @@ export const TasksItems = () => {
         Назад
       </div>
       {tasks.length === 0 ? (
-        <div style={{ textAlign: 'center', fontSize: '2rem', color: 'grey' }}>
-          К сожалению задач нет...
-        </div>
+          <div style={{textAlign: 'center', fontSize: '2rem', color: 'grey'}}>
+            К сожалению задач нет...
+            {(role === 'Админ' || role === 'Учитель') && (
+            <button style={{marginTop: '50px'}} className="vacancies-page__add-btn" onClick={() => setIsModalOpen(true)}>
+              Добавить задачу
+            </button>
+            )}
+          </div>
       ) : (
           <>
             <div className="courses__title">Задачи</div>
-
+            {(role === 'Админ' || role === 'Учитель') && (
             <button className="vacancies-page__add-btn" onClick={() => setIsModalOpen(true)}>
               Добавить задачу
             </button>
+            )}
 
             {isModalOpen && (
                 <div className="vacancies-page__modal">

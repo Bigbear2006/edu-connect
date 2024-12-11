@@ -31,7 +31,7 @@ export const createRespond = async (id: number) => {
 
 export const getRespondes = async () => {
   try {
-    const response = await axiosInstance.get('/auth/user/jobs-applications/');
+    const response = await axiosInstance.get('/auth/user/jobs-applications');
     return response.data;
   } catch (error) {
     console.log('Ошибка', error);
@@ -40,7 +40,7 @@ export const getRespondes = async () => {
 
 export const currentApplication = async (id: string) => {
   try {
-    const response = await axiosInstance.get(`/jobs/${id}/applications/`);
+    const response = await axiosInstance.get(`/jobs/${id}/applications`);
     return response.data;
   } catch (error) {
     console.log('Ошибка', error);

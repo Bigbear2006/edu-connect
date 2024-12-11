@@ -1,4 +1,3 @@
-//@ts-ignore
 import { faCrown, faUserGraduate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
@@ -43,7 +42,7 @@ export const Profile = () => {
 
     const fetchCurrentApplication = async () => {
       try {
-        const response = await currentApplication('1');
+        const response = await currentApplication('2');
         setApplications(response);
       } catch (error) {
         console.log(error);

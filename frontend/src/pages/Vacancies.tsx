@@ -17,7 +17,7 @@ const Vacancies: React.FC = () => {
 
   const handleAddVacancy = async () => {
     try {
-      await createVacancy(title, description, 1);
+      await createVacancy(title, description, Number('2'));
       setIsModalOpen(false);
     } catch (error) {
       console.log('Ошибка при добавлении вакансии', error);
@@ -32,9 +32,11 @@ const Vacancies: React.FC = () => {
         <Header />
         <div className="container">
           <h1 className="vacancies-page__title">Вакансии</h1>
+
           <button className="vacancies-page__add-btn" onClick={() => setIsModalOpen(true)}>
             Добавить вакансию
           </button>
+
 
           {isModalOpen && (
               <div className="vacancies-page__modal">
