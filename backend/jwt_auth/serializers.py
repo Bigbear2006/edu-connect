@@ -31,5 +31,5 @@ class UserSerializer(ModelSerializer):
         )
 
     def update(self, instance, validated_data):
-        validated_data.pop('role', None)
+        # validated_data.pop('role', None)
         return super(UserSerializer, self).update(instance, validated_data)

@@ -193,3 +193,20 @@ class JobApplicationViewSet(mixins.CreateModelMixin, GenericViewSet):
         obj.save()
         data = serializers.JobApplicationSerializer(obj).data
         return Response(data, 200)
+
+
+class ForumViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    GenericViewSet,
+):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = models.Forum.objects.all().select_related('created_by')
+    serializer_class = serializers.ForumSerializer
+
+
+class CommentViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    queryset = models.Comment.objects.all().select_related('user')
+    serializer_class = serializers.CommentSerializer

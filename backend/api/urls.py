@@ -13,6 +13,8 @@ router.register(
 )
 router.register('companies', views.CompanyViewSet, 'companies')
 router.register('jobs', views.JobViewSet, 'jobs')
+router.register('forums', views.ForumViewSet, 'forums')
+router.register('comments', views.CommentViewSet, 'comments')
 router.register(
     'jobs-applications',
     views.JobApplicationViewSet,
