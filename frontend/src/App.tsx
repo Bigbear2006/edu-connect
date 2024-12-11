@@ -1,15 +1,20 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { Courses, Login, Profile, Register, Tasks, Webinar } from './pages';
+import { Courses } from './pages/Courses.tsx';
 import { Forum } from './pages/Forum.tsx';
 import { ForumPage } from './pages/ForumPage.tsx';
+import { Login } from './pages/Login.tsx';
+import { Profile } from './pages/Profile.tsx';
+import { Register } from './pages/Register.tsx';
+import { Tasks } from './pages/Tasks.tsx';
 import Vacancies from './pages/Vacancies.tsx';
+import { Webinar } from './pages/Webinar.tsx';
 import { ProtectedRoute } from './ProtectedRoutes';
 import './sass/app.scss';
 
 export const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to={'/login'} />} />
+      <Route path="/" element={<Navigate to="/login" />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route
@@ -52,14 +57,14 @@ export const App = () => {
           </ProtectedRoute>
         }
       />
-      <Route>
-        path="/forum" element=
-        {
+      <Route
+        path="/forum"
+        element={
           <ProtectedRoute>
             <Forum />
           </ProtectedRoute>
         }
-      </Route>
+      />
       <Route
         path="/forum/:id"
         element={
