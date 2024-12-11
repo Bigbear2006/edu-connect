@@ -19,8 +19,8 @@ interface CompletedTask {
   solution: string;
   completed_at: string;
   is_right: boolean | null;
-  task: number; 
-  user: number; 
+  task: number;
+  user: number;
 }
 
 export const TasksItems = () => {
@@ -33,7 +33,6 @@ export const TasksItems = () => {
   const [selectedTaskId, setSelectedTaskId] = useState<string>('');
   const [responseText, setResponseText] = useState('');
   const [role, setRole] = useState('');
-
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -66,7 +65,7 @@ export const TasksItems = () => {
     const fetchCompletedTasks = async () => {
       if (role === 'Учитель' && selectedTaskId) {
         try {
-          const response = await getCurrentCompletedTasks(selectedTaskId); 
+          const response = await getCurrentCompletedTasks(selectedTaskId);
           setCompletedTasks(response);
         } catch (error) {
           console.log(error);
@@ -75,13 +74,13 @@ export const TasksItems = () => {
     };
 
     fetchCompletedTasks();
-  }, [role, selectedTaskId]); 
+  }, [role, selectedTaskId]);
 
   const handleTaskClick = (taskId: string) => {
     if (selectedTaskId !== taskId) {
       setSelectedTaskId(taskId);
       setIsTextAreaVisible(true);
-      setResponseText(''); 
+      setResponseText('');
     }
   };
 
@@ -161,38 +160,32 @@ export const TasksItems = () => {
                 )}
 
                 {role === 'Студент' && (
-                    <div className="completed-task">
-                      <h4>Статус:</h4>
-                      <button
-                          className="job-card__apply-btn"
-                          disabled={
-                            completedTasks.some(
-                                (completedTask) => completedTask.task === Number(el.id) && completedTask.is_right !== null
-                            )
-                          }
-                      >
-                        {completedTasks.some(
-                            (completedTask) => completedTask.task === Number(el.id) && completedTask.is_right
-                        )
-                            ? 'Правильное'
-                            : 'Не оценено'}
-                      </button>
+                  <div className="completed-task">
+                    <h4>Статус:</h4>
+                    <div className="job-card__apply-btn">
+                      <span
+                        style={{
+                          color: el.is_right === true ? 'green' : 'grey', 
+                        }}>
+                        {el.is_right === true ? 'Правильное' : 'Не оценено'}
+                      </span>
                     </div>
+                  </div>
                 )}
 
-
                 {role === 'Учитель' &&
-                    completedTasks.length > 0 &&
+                  completedTasks.length > 0 &&
                   completedTasks.map(
                     (completedTask) =>
                       completedTask.task === Number(el.id) && (
                         <div key={completedTask.id} className="completed-task">
-                          <h4>Решение:</h4>
-                          <p>{completedTask.solution}</p>
-                          <button
-                            onClick={() => processingTask(completedTask.id, completedTask.id)}>
-                            Принять
-                          </button>
+                          <div className="completed-task-solition">{completedTask.solution}</div>
+                          <div className="completed-task-button">
+                            <button
+                              onClick={() => processingTask(completedTask.id, completedTask.id)}>
+                              Принять
+                            </button>
+                          </div>
                         </div>
                       ),
                   )}

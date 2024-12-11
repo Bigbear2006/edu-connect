@@ -5,13 +5,23 @@ interface CourseCardProps {
   id: string;
   title: string;
   description: string;
+  role: string;
+  rightCount: string;
+  tasksCount: string;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ id, title, description }) => {
+const CourseCard: React.FC<CourseCardProps> = ({
+  id,
+  title,
+  description,
+  role,
+  rightCount,
+  tasksCount,
+}) => {
   const navigate = useNavigate();
 
   return (
-    <div onClick={() => navigate(`/tasks/${id}`)} className="course-card">
+    <div key={id} onClick={() => navigate(`/tasks/${id}`)} className="course-card">
       <div className="course-card-background" />
       <div
         className="course-card-content"
@@ -20,6 +30,12 @@ const CourseCard: React.FC<CourseCardProps> = ({ id, title, description }) => {
         }}>
         <h2 className="course-card-title">{title}</h2>
         <p className="course-card-description">{description}</p>
+        {role === 'Студент' && (
+          <div style={{color: '#eeeeee'}}>
+            <div>Все задачи: {tasksCount}</div>
+            <div>Решенные задачи: {rightCount}</div>
+          </div>
+        )}
       </div>
     </div>
   );

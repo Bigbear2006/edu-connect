@@ -5,10 +5,10 @@
   padding-bottom: 50px;
 
   &__button {
-    background-color: #98DCC6;
+    background-color: $dark-green;
     color: #fff;
-    margin: 20px auto;
-    width: 100%;
+    margin: 20px 0px 50px 0px;
+    width: 300px;
     font-size: 1rem;
     font-weight: bold;
     border: none;
@@ -16,6 +16,11 @@
     padding: 10px 20px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+
+		&:hover {
+			transition: .3s ease;
+			background-color: $green;
+		}
   }
 
   &__title {
@@ -103,11 +108,36 @@
 .completed-task {
   display: flex;
   padding: 20px;
-  justify-content: space-between;
-  align-items: center;
+	gap: 20px;
+	flex-direction: column;
+
+	&-solition {
+		text-align: start;
+	}
 
   button {
     padding: 10px;
     border-radius: 10px;
+		width: 100px;
+		background-color: $dark-green;
+		color: white;
+		transition: .3s ease;	
+
+		&:hover {
+			transition: .3s ease;
+			background-color: $green;
+		}
   }
+
+	&-button {
+		display: flex;
+		justify-content: end;
+	}
+}
+
+.job-card__apply-btn {
+	border: 1px solid rgb(174, 174, 174);
+	padding: 5px 0;
+	border-radius: 5px;
+	color: rgb(137, 137, 137);
 }

@@ -4,20 +4,21 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getBids } from '../api/admin';
 import { getCourses } from '../api/courses';
-import { changeRole, getCurrentUser } from '../api/user';
+import { changeRole, getCurrentUser, getPortfolio } from '../api/user';
 import { currentApplication } from '../api/vacancy';
 import { BidRole, Header } from '../components';
 import CourseCard from '../components/course-card';
+import { formatDate } from '../lib';
 import { Bid } from '../types/bid';
 import { Course } from '../types/course';
 import { User } from '../types/user';
-import { formatDate } from '../lib';
 
 export const Profile = () => {
   const [courses, setCourses] = useState([]);
   const [user, setUser] = useState<User>();
   const [applications, setApplications] = useState([]);
   const [bids, setBids] = useState<Bid[]>([]);
+  const [portfolio, setPortfolio] = useState([]);
 
   const navigate = useNavigate();
 
@@ -55,6 +56,22 @@ export const Profile = () => {
       fetchCourses();
     }
   }, []);
+
+  useEffect(() => {
+    const fetchPortfolio = async () => {
+      if (user?.id) {
+        try {
+          const response = await getPortfolio(user.id);
+          setPortfolio(response);
+          console.log(response);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+
+    fetchPortfolio(); 
+  }, [user]);
 
   useEffect(() => {
     if (user?.role === 'Админ') {
@@ -139,7 +156,29 @@ export const Profile = () => {
           <div className="profile-content__courses">
             <h1>Курсы</h1>
             {courses.map((el: Course) => (
-              <CourseCard id={el.id} title={el.title} description={el.description} />
+              <CourseCard
+                role={user.role}
+                tasksCount={el.tasks_count}
+                rightCount={el.right_count}
+                id={el.id}
+                title={el.title}
+                description={el.description}
+              />
+            ))}
+          </div>
+        )}
+        {user?.role === 'Студент' && (
+          <div className="profile-content__courses">
+            <h1>Курсы</h1>
+            {portfolio.map((el: Course) => (
+              <CourseCard
+                id={el.id}
+                role={user.role}
+                tasksCount={el.tasks_count}
+                rightCount={el.right_count}
+                title={el.title}
+                description={el.description}
+              />
             ))}
           </div>
         )}
