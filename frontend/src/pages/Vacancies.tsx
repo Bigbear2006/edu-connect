@@ -3,7 +3,7 @@ import { Header } from '../components';
 import VacancyCard from '../components/vacancy-card.tsx';
 import { useVacancies } from '../hooks/useVacancies';
 import { useRespondes } from '../hooks/useRespondes';
-import { createVacancy } from '../api/vacancy';
+import {createVacancy, getVacancies} from '../api/vacancy';
 import '../sass/components/_vacancy.scss';
 
 const Vacancies: React.FC = () => {
@@ -17,8 +17,9 @@ const Vacancies: React.FC = () => {
 
   const handleAddVacancy = async () => {
     try {
-      await createVacancy(title, description, Number('2'));
+      await createVacancy(title, description, 1);
       setIsModalOpen(false);
+      await getVacancies();
     } catch (error) {
       console.log('Ошибка при добавлении вакансии', error);
     }
